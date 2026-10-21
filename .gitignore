@@ -1,0 +1,14 @@
+# Keep proprietary firmware and experimental files out of Git.
+*.img
+*.IMG
+*.bin
+*.exe
+*.sys
+*.cat
+*.inf
+*.zip
+/private/
+/samples-private/
+/__pycache__/
+.DS_Store
+Thumbs.db
