@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Carabc Logo Editor v1.0.0 Community Edition</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#f3f6fa;color:#14243b}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px 60px}main{max-width:1030px;margin:auto}
+header{margin-bottom:22px}.headerbar{display:flex;align-items:start;justify-content:space-between;gap:14px}
+.eyebrow{font-size:11px;font-weight:850;letter-spacing:1.6px;color:#316ab6;text-transform:uppercase}
+h1{font-size:clamp(27px,5vw,39px);letter-spacing:-1.25px;margin:7px 0 6px;line-height:1.1}.version{font-size:13px;vertical-align:middle;letter-spacing:0;font-weight:700;color:#647e9c}
+.lead{color:#53687f;line-height:1.65;max-width:780px;margin:0;font-size:14px}.langbox{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #d6e1ee;border-radius:12px;padding:11px;box-shadow:0 2px 8px #203d5710}.globe{font-size:21px}.langbox select{border:none;background:transparent;color:#25476d;font-size:14px;font-weight:750;max-width:165px}
+.topnav{display:flex;flex-wrap:wrap;gap:7px;background:#e9eff6;padding:6px;border-radius:13px;margin:22px 0}.navbtn{border:0;background:transparent;padding:12px 17px;border-radius:10px;font:700 13px system-ui;cursor:pointer;color:#536a84;flex:1;white-space:nowrap}.navbtn[aria-selected="true"]{background:#fff;color:#1454a4;box-shadow:0 1px 6px #1e355b1c}
+.panel{background:#fff;border:1px solid #dce5ef;border-radius:16px;padding:23px;margin:16px 0;box-shadow:0 4px 17px #1c37500b}
+h2{font-size:19px;letter-spacing:-.35px;margin:0 0 10px}h3{font-size:15px;margin:20px 0 10px}.stepbar{display:flex;gap:7px;margin:14px 0 20px}.step-indicator{height:7px;flex:1;border-radius:99px;background:#dfe8f4;transition:background .15s}.step-indicator.active{background:#2464bd}
+.step-label{font-size:13px;color:#738399;font-weight:700;margin-bottom:5px}.subtle{color:#5b6d82;font-size:13px;line-height:1.65;margin:0 0 15px}.control{display:flex;align-items:center;flex-wrap:wrap;gap:12px}input[type=file]{display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #b8cde3;border-radius:11px;background:#fff;color:#1d5197;padding:11px 16px;min-height:44px;font:750 13px system-ui;cursor:pointer;user-select:none}.btn.primary{background:#2464bd;border-color:#2464bd;color:#fff}.btn:hover:not(:disabled){filter:brightness(.96)}.btn:disabled{opacity:.46;cursor:not-allowed}
+.filename{font-size:13px;overflow-wrap:anywhere;flex:1;min-width:180px;color:#597088}.dim{font-size:12px;color:#66798d;line-height:1.65}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.preview{width:100%;aspect-ratio:16 / 9;object-fit:contain;background:#111c2c;border-radius:10px;border:1px solid #dce5ef}.preview-label{font-size:12px;font-weight:800;color:#475f7c;margin-bottom:8px}
+.statrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.stat,.mini{border-radius:8px;background:#eef4fb;color:#304f76;padding:7px 10px;font-size:12px}.mini{display:inline-block;margin:5px 6px 0 0}
+.notice{border:1px solid #f0dbac;background:#fffaf0;color:#725216;border-radius:11px;padding:14px;font-size:13px;line-height:1.65;margin:15px 0}.info{background:#f2f7ff;border-color:#d7e7fe;color:#315786}.goodbox{background:#f1f8f3;border-color:#cae5d0;color:#205c33}.warning{color:#96572a;font-size:13px;line-height:1.65}
+.comparebox{padding:15px;background:#f6faff;border-radius:12px;border:1px solid #dbe9f7;margin:15px 0}.comparebox h3{margin:0 0 11px}.comparehint{font-size:12px;color:#52667b;line-height:1.55}
+.namefield{display:block;font-size:13px;font-weight:800;margin:13px 0 7px}.nameinput{width:100%;padding:12px 13px;border:1px solid #bdcde0;border-radius:10px;color:#172f49;font-size:14px}.savehint{font-size:12px;color:#65788c;line-height:1.6;margin-top:8px}
+#saveDialog{width:min(520px,calc(100% - 24px));max-width:520px;border:1px solid #d4e0ed;border-radius:18px;padding:23px 26px;box-shadow:0 25px 75px #15263c45;color:#152d4b;background:#fff}
+#saveDialog::backdrop{background:#12253e99}#saveDialog h2{margin:0 0 10px}#saveDialog .action{justify-content:flex-end;margin-bottom:0}#saveDialog .nameinput{margin-top:5px}#saveDialog .savehint{margin-bottom:12px}
+.checkline{display:flex;align-items:start;gap:11px;background:#f7f9fc;border:1px solid #e4ebf4;border-radius:11px;padding:13px;margin:9px 0;font-size:13px;line-height:1.55;cursor:pointer}.checkline input{margin-top:3px;width:16px;height:16px;accent-color:#2464bd;flex:none}
+.action{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:15px 0}.wizard-buttons{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;border-top:1px solid #e6edf6;padding-top:18px}
+#status,#verifyStatus{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #e3eaf2;background:#f4f7fb;color:#304b6d;padding:14px;border-radius:11px;font-size:13px;line-height:1.6;min-height:68px}
+#status.error,#verifyStatus.error{color:#952525;background:#fff2f0;border-color:#f3d1cd}#status.good,#verifyStatus.good{color:#246536;background:#eff8f2;border-color:#cde8d3}
+#summary{display:none}.hidden{display:none!important}.fine{font-size:12px;line-height:1.7;color:#61758a}.footer{margin-top:25px;text-align:center;color:#75869b;font-size:12px}
+.filepanel{border:1px dashed #cbd9e9;padding:18px;border-radius:12px;background:#f8fbff}.metricbox{border:1px solid #e2eaf2;border-radius:10px;padding:11px;background:#f9fbfd}.reportgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.guide-list{counter-reset:guide;margin:10px 0;padding:0;list-style:none}.guide-list li{counter-increment:guide;display:flex;gap:12px;align-items:start;padding:10px 0;line-height:1.65;font-size:13px;color:#41556e}.guide-list li:before{content:counter(guide);display:grid;place-items:center;width:27px;height:27px;border-radius:8px;background:#e8f2ff;color:#215aa7;font-weight:800;flex:none}
+.bullets{padding-left:21px;font-size:13px;line-height:1.8;color:#41556e}.bullets li{margin-bottom:7px}.copyright{margin-top:10px;color:#536780;font-size:13px}
+button:focus-visible,select:focus-visible,input:focus-visible,label.btn:focus-visible{outline:3px solid #85b8f9;outline-offset:3px}
+@media(max-width:650px){body{padding:18px 10px 40px}.panel{padding:18px}.grid,.reportgrid{grid-template-columns:1fr}.headerbar{flex-wrap:wrap}.langbox{margin-left:auto}.navbtn{flex-basis:40%}.wizard-buttons{flex-wrap:wrap}}
+
+/* v1.0.0 · visual-composition interface (firmware engine unchanged) */
+:root{color-scheme:dark;background:#081726;color:#e7f0fc}
+body{background:radial-gradient(circle at 72% -10%,#10345a 0%,#081726 45%,#071320 95%);color:#e7f0fc;padding:28px 18px 64px}
+main{max-width:1600px}
+.eyebrow{color:#6ab0ff}.version{color:#a6bed9}.lead,.subtle,.dim,.fine,.footer{color:#9eb4cd}
+.langbox,.panel,.inner-panel,#saveDialog{background:#102338;border-color:#2a455f;color:#e7f0fc;box-shadow:0 6px 18px #0002}
+.langbox select,.nameinput,.editor-select,.hex-input,.offsets input,#saveDialog input{background:#142b43;border:1px solid #32516d;color:#e7f0fc}
+.topnav{background:#0b1e30;border:1px solid #20384d}
+.navbtn{color:#9cb8d2}.navbtn[aria-selected="true"]{background:#174472;color:#e7f5ff;box-shadow:inset 0 0 0 1px #2f8fe5}
+.btn{background:#223d57;border-color:#43627c;color:#e9f3ff}.btn.primary{background:#0875d9;border-color:#1597ff;color:#fff}.btn:hover:not(:disabled){filter:brightness(1.13)}
+.step-indicator{background:#284058}.step-indicator.active{background:#1687e9}
+.stat,.mini,.metricbox,.filepanel,.comparebox,.checkline{background:#112e49;color:#bdd8f3;border-color:#31516d}
+.preview{border-color:#315672}.preview-label{color:#b6d5f1}
+.notice{background:#332c1e;border-color:#736133;color:#ffdc9b}.info{background:#102e47;border-color:#2a648b;color:#b7dfff}.goodbox{background:#102f2b;color:#99f7bd;border-color:#286b50}
+#status,#verifyStatus{background:#0a1d30;color:#bcd7ef;border-color:#24445c}#status.good,#verifyStatus.good{background:#102c28;color:#a7e6be;border-color:#2b6851}#status.error,#verifyStatus.error{background:#321e26;color:#ffb9c0;border-color:#873c47}
+#saveDialog::backdrop{background:#020c17c9}.warning{color:#ffbf7c}.checkline{color:#cce1f4}
+.guide-list li,.bullets{color:#b8d0e8}.guide-list li:before{background:#123d66;color:#9acfff}.copyright{color:#93abc4}
+.builder-head{display:flex;justify-content:space-between;align-items:start;gap:15px;flex-wrap:wrap}.screen-size,.muted-pill{color:#a2c6e8;background:#17354f;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:700}
+.composition-layout{display:grid;grid-template-columns:minmax(230px,.86fr) minmax(390px,1.75fr) minmax(250px,.9fr);align-items:start;gap:14px}
+.composition-column,.composition-center{display:flex;flex-direction:column;gap:12px;min-width:0}
+.inner-panel{border:1px solid #29425b;border-radius:13px;padding:16px;margin:0;background:#0c1f32;box-shadow:none}
+.inner-panel h3{margin:0 0 13px;font-size:14px;font-weight:750;color:#e3efff}.inner-panel .fine{margin-top:9px}
+.inner-panel .dim{overflow-wrap:anywhere}.inner-panel .btn.full-button{width:100%;margin:3px 0 9px}
+.source-preview{background:repeating-conic-gradient(#dfebf7 0% 25%,#96aabe 0% 50%) 50% / 20px 20px;border-radius:9px;min-height:110px;display:grid;place-items:center;overflow:hidden}
+.source-preview img{width:100%;max-height:150px;object-fit:contain}
+.field-label{font-size:12px;color:#bcd3e8;font-weight:700;display:block;margin:15px 0 8px}.field-label.between{display:flex;justify-content:space-between;align-items:center}
+.editor-select{border-radius:9px;padding:10px;width:100%;font:600 12px system-ui;min-height:39px}
+.editor-range{width:100%;accent-color:#259dff;cursor:pointer}.field-label output{font-variant-numeric:tabular-nums;background:#183754;padding:5px 8px;border-radius:7px}
+.placement-grid-wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.anchor-grid{display:grid;grid-template-columns:repeat(3,32px);grid-template-rows:repeat(3,32px);gap:5px;flex:none}.anchor-grid button{background:#1b3952;color:#b9d7f1;border:1px solid #315675;border-radius:7px;cursor:pointer}.anchor-grid button.active{background:#1177c9;color:#fff;border-color:#47b8ff}
+.offsets{display:grid;grid-template-columns:1fr 80px;gap:9px;align-items:center;min-width:140px;flex:1}.offsets label{font-size:12px;color:#a5c2da}.offsets input{border-radius:7px;padding:7px;width:80px;font-size:12px}
+.btn.small{min-height:35px;padding:8px 10px;font-size:11px}
+.panel-title-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.panel-title-row h3{margin:0 0 10px}
+.canvas-frame{border-radius:10px;border:1px solid #325a7c;overflow:hidden;background:#050a12;line-height:0}
+#liveCanvas{width:100%;height:auto;aspect-ratio:16/9;display:block}
+.composition-state{font-variant-numeric:tabular-nums;margin-top:9px;min-height:20px}
+.preview-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:11px}
+.check-compact{display:flex;align-items:center;gap:8px;font-size:11px;color:#afcfe9;cursor:pointer}.check-compact input{accent-color:#1687e9}
+.quick-previews{display:flex;align-items:center;gap:7px;margin-top:15px;overflow-x:auto;padding-bottom:2px}.quick-previews button{flex:1;min-width:60px;max-width:100px;color:#aac6df;font-size:10px;background:#122c44;border:1px solid #2f4e68;border-radius:8px;padding:5px;cursor:pointer}.quick-previews button.active{border-color:#28a1ff;box-shadow:0 0 0 1px #28a1ff}.quick-previews .sample{display:block;height:33px;border-radius:5px;margin-bottom:5px;border:1px solid #3b5569}
+.old-preview{max-height:240px;object-fit:contain}
+.bg-radio{padding:14px 0 9px}.bg-radio label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:750;cursor:pointer}.bg-radio input{accent-color:#238af2}
+.color-field{display:flex;align-items:center;gap:8px}.color-field input[type=color]{width:48px;height:40px;border:1px solid #4d7597;border-radius:8px;padding:3px;background:#152c43;cursor:pointer}.hex-input{border-radius:9px;padding:9px;flex:1;min-width:70px;font:600 12px monospace}
+.swatches{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.swatches button{width:33px;height:33px;border-radius:8px;border:2px solid #506b83;background:var(--swatch);cursor:pointer}.swatches button.active{border-color:#33a6ff;box-shadow:0 0 0 2px #0b2742}
+.two-color{display:flex;gap:12px}.two-color label{font-size:11px;color:#bed5ec;flex:1}.two-color input{display:block;width:100%;height:42px;background:#17324b;border:1px solid #4e7590;border-radius:7px;margin:6px 0}
+.check-explainer{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.6;color:#b6d2e9}.check-explainer span:first-child{color:#8df2bf;font-weight:900}
+@media(max-width:1060px){.composition-layout{grid-template-columns:minmax(220px,1fr) minmax(360px,1.6fr)}.composition-column:last-child{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.composition-layout{display:flex;flex-direction:column}.composition-layout>*>.inner-panel{width:100%}.composition-column,.composition-center{width:100%}.composition-column:last-child{display:flex}.inner-panel{padding:13px}body{padding:12px 9px 35px}}
+
+
+/* v1.0.0 — simplified composition workspace */
+.source-strip{display:grid;grid-template-columns:1.22fr 1fr;gap:12px;margin:12px 0 14px}
+.source-tile{display:flex;gap:14px;align-items:center;padding:13px;background:#0c1f32;border:1px solid #29425b;border-radius:13px;min-width:0}
+.source-tile.source-active{border-color:#3476aa}
+.source-tile-thumb{width:122px;min-width:122px;height:78px;border:1px solid #3c5670;border-radius:8px;display:grid;place-items:center;overflow:hidden;background:#102638}
+.source-tile-thumb.source-preview{min-height:0;background:repeating-conic-gradient(#e2eaf2 0 25%,#a0b4c6 0 50%) 50%/16px 16px}
+.source-tile-thumb img{width:100%;height:100%;max-height:78px;object-fit:contain;aspect-ratio:auto;border:0;background:transparent;border-radius:0}
+.source-tile-body{flex:1;min-width:0}.source-tile-body h3{margin:0 0 5px;font-size:13px}.source-tile-body p{margin:0 0 9px;min-height:14px;font-size:11px;line-height:1.35}.source-tile-body .btn{min-height:34px;padding:7px 10px;font-size:11px}
+.compact-layout{grid-template-columns:minmax(230px,1fr) minmax(410px,1.9fr) minmax(250px,1.04fr)}
+.compact-layout .composition-center .inner-panel{min-width:0}
+.compact-layout .inner-panel{height:100%}
+.compact-layout .composition-center .inner-panel{height:auto}
+.compact-layout .composition-column .inner-panel{height:100%}
+.compact-layout .preview-toolbar{margin-top:12px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+.compact-layout .preview-toolbar .fine{font-size:11px;max-width:260px}
+.compact-layout .panel-title-row{gap:9px;flex-wrap:wrap}
+.compare-heading{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.compare-heading h3{margin:0}
+#comparebox{margin:0;background:#0c1f32;border-color:#31516d}
+#comparebox .preview{max-height:250px}
+#closePreview{min-height:34px;font-size:11px}
+#step4 .action{margin-top:18px}
+@media(max-width:1100px){.compact-layout{grid-template-columns:1fr 1.65fr}.compact-layout>.composition-column:last-child{grid-column:1/-1;display:block}}
+@media(max-width:780px){.compact-layout{display:flex;flex-direction:column}.source-strip{grid-template-columns:1fr}.source-tile-thumb{width:98px;min-width:98px;height:66px}.source-tile-thumb img{max-height:66px}}
+
+/* v1.0.0 - UI-only theme selector; dark is original v3.0.3 palette */
+.header-actions{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:45px;padding:10px 15px;border-radius:12px;background:#163552;color:#e7f2ff;border:1px solid #3a6487;font:700 13px system-ui;cursor:pointer;white-space:nowrap}
+.theme-toggle:hover{filter:brightness(1.12)}.theme-toggle #themeGlyph{font-size:18px;line-height:1}
+.theme-toggle:focus-visible{outline:3px solid #85b8f9;outline-offset:3px}
+@media(max-width:650px){.header-actions{margin-left:auto}}
+html[data-theme="light"]{color-scheme:light;background:#f3f6fa;color:#14243b}
+html[data-theme="light"] body{background:#f3f6fa;color:#14243b}
+html[data-theme="light"] .eyebrow{color:#316ab6}
+html[data-theme="light"] .version{color:#647e9c}
+html[data-theme="light"] .lead,html[data-theme="light"] .subtle,html[data-theme="light"] .dim,html[data-theme="light"] .fine,html[data-theme="light"] .footer{color:#53687f}
+html[data-theme="light"] .langbox,html[data-theme="light"] .panel,html[data-theme="light"] .inner-panel,html[data-theme="light"] #saveDialog{background:#fff;color:#14243b;border-color:#d6e1ee;box-shadow:0 4px 17px #1c37500b}
+html[data-theme="light"] .langbox select,html[data-theme="light"] .nameinput,html[data-theme="light"] .editor-select,html[data-theme="light"] .hex-input,html[data-theme="light"] .offsets input,html[data-theme="light"] #saveDialog input{background:#fff;color:#172f49;border-color:#b8cde3}
+html[data-theme="light"] .topnav{background:#e9eff6;border-color:#dce5ef}
+html[data-theme="light"] .navbtn{color:#536a84}
+html[data-theme="light"] .navbtn[aria-selected="true"]{background:#fff;color:#1454a4;box-shadow:0 1px 6px #1e355b1c}
+html[data-theme="light"] .btn{background:#fff;border-color:#b8cde3;color:#1d5197}
+html[data-theme="light"] .btn.primary{background:#2464bd;border-color:#2464bd;color:#fff}
+html[data-theme="light"] .step-indicator{background:#dfe8f4}
+html[data-theme="light"] .step-indicator.active{background:#2464bd}
+html[data-theme="light"] .stat,html[data-theme="light"] .mini,html[data-theme="light"] .metricbox,html[data-theme="light"] .filepanel,html[data-theme="light"] .comparebox,html[data-theme="light"] .checkline{background:#f7f9fc;color:#304f76;border-color:#dbe9f7}
+html[data-theme="light"] .preview{border-color:#dce5ef}html[data-theme="light"] .preview-label{color:#475f7c}
+html[data-theme="light"] .notice{background:#fffaf0;color:#725216;border-color:#f0dbac}
+html[data-theme="light"] .info{background:#f2f7ff;color:#315786;border-color:#d7e7fe}
+html[data-theme="light"] .goodbox{background:#f1f8f3;color:#205c33;border-color:#cae5d0}
+html[data-theme="light"] #status,html[data-theme="light"] #verifyStatus{background:#f4f7fb;color:#304b6d;border-color:#e3eaf2}
+html[data-theme="light"] #status.good,html[data-theme="light"] #verifyStatus.good{background:#eff8f2;color:#246536;border-color:#cde8d3}
+html[data-theme="light"] #status.error,html[data-theme="light"] #verifyStatus.error{background:#fff2f0;color:#952525;border-color:#f3d1cd}
+html[data-theme="light"] #saveDialog::backdrop{background:#12253e99}
+html[data-theme="light"] .warning{color:#96572a}
+html[data-theme="light"] .checkline{color:#304f76}
+html[data-theme="light"] .guide-list li,html[data-theme="light"] .bullets{color:#41556e}
+html[data-theme="light"] .guide-list li::before{background:#e8f2ff;color:#215aa7}
+html[data-theme="light"] .copyright{color:#536780}
+html[data-theme="light"] .theme-toggle{background:#e7f0fc;color:#1454a4;border-color:#bad0e5}
+html[data-theme="light"] .screen-size,html[data-theme="light"] .muted-pill{background:#e8f2ff;color:#315786}
+html[data-theme="light"] .inner-panel h3{color:#243d59}
+html[data-theme="light"] .field-label,html[data-theme="light"] .offsets label,html[data-theme="light"] .two-color label{color:#385977}
+html[data-theme="light"] .field-label output{background:#e8f2fc;color:#24537b}
+html[data-theme="light"] .anchor-grid button{background:#eef5fe;color:#1b4c78;border-color:#a9cbe8}
+html[data-theme="light"] .anchor-grid button.active{background:#1177c9;color:#fff;border-color:#1177c9}
+html[data-theme="light"] .check-compact{color:#476987}
+html[data-theme="light"] .quick-previews button{color:#304f76;background:#f3f7fc;border-color:#c5d7e8}
+html[data-theme="light"] .quick-previews button.active{border-color:#1687e9}
+html[data-theme="light"] .color-field input[type=color]{background:#fff;border-color:#b3cde3}
+html[data-theme="light"] .swatches button{border-color:#9bb4c9}
+html[data-theme="light"] .swatches button.active{border-color:#1687e9;box-shadow:0 0 0 2px #d1e9ff}
+html[data-theme="light"] .two-color input{background:#fff;border-color:#b3cde3}
+html[data-theme="light"] .check-explainer{color:#476987}
+html[data-theme="light"] .check-explainer span:first-child{color:#17804e}
+html[data-theme="light"] .source-tile,html[data-theme="light"] #comparebox{background:#f8fbff;border-color:#d2e1ef}
+html[data-theme="light"] .source-tile.source-active{border-color:#1687e9}
+html[data-theme="light"] .source-tile-thumb{border-color:#d2e1ef;background:#e9f3fa}
+html[data-theme="light"] .canvas-frame{border-color:#bbd2e6}
+
+
+/* v1.0.0: responsive positioning controls; safe for longer translations */
+.placement-grid-wrap{
+  display:grid;
+  grid-template-columns:max-content minmax(0,1fr);
+  align-items:start;
+  gap:16px;
+  width:100%;
+  min-width:0;
+}
+.anchor-grid{align-self:start}
+.offsets{
+  display:flex;
+  flex-direction:column;
+  flex:initial;
+  gap:10px;
+  min-width:0;
+  width:100%;
+}
+.offset-control{display:flex;flex-direction:column;gap:5px;min-width:0}
+.offset-control label{display:block;max-width:100%;overflow-wrap:anywhere;font-size:11px;line-height:1.4}
+.offset-control input{width:100%;min-width:0;max-width:100%;height:37px;font-size:13px}
+.placement-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:23px}
+.placement-actions .btn{width:100%;min-width:0;max-width:100%;padding:9px 7px;white-space:normal;text-align:center;line-height:1.4;overflow-wrap:anywhere}
+@container (max-width:230px){.placement-grid-wrap{grid-template-columns:1fr}.offsets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+.composition-column>.inner-panel{container-type:inline-size}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="headerbar"><div><div class="eyebrow" data-i18n="community"></div><h1>Carabc Logo Editor <span class="version">v1.0.0</span></h1></div>
+ <div class="header-actions"><button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false"><span id="themeGlyph" aria-hidden="true">☀</span><span id="themeText">Light mode</span></button><label class="langbox" for="langSelect"><span class="globe" aria-hidden="true">🌐</span><select id="langSelect" aria-label="Language / Idioma / 语言"><option value="en">English</option><option value="es">Español</option><option value="zh-CN">简体中文</option></select></label></div></div>
+ <p class="lead" data-i18n="subtag"></p>
+</header>
+<nav class="topnav" aria-label="Application sections"><button class="navbtn" id="navEditor" data-i18n="navEditor" data-tab="editor" aria-selected="true"></button><button class="navbtn" id="navVerify" data-i18n="navVerify" data-tab="verify" aria-selected="false"></button><button class="navbtn" id="navGuide" data-i18n="navGuide" data-tab="guide" aria-selected="false"></button><button class="navbtn" id="navAbout" data-i18n="navAbout" data-tab="about" aria-selected="false"></button></nav>
+<section id="view-editor" class="view">
+ <div class="panel">
+  <div class="step-label" id="stepLabel"></div><div class="stepbar" aria-hidden="true"><div class="step-indicator active"></div><div class="step-indicator"></div><div class="step-indicator"></div><div class="step-indicator"></div></div>
+  <div class="wizard-section" id="step1">
+   <h2 data-i18n="stepOne"></h2><p class="subtle" data-i18n="step1Desc"></p>
+   <div class="control"><label class="btn" for="firmware" data-i18n="chooseFirmware"></label><input id="firmware" type="file" accept=".img,application/octet-stream"><span class="filename" id="fname"></span></div>
+   <div id="summary"><div id="stats" class="statrow"></div><p class="dim" id="firmwaredetail"></p></div>
+   <div class="notice info"><strong data-i18n="compatHeading"></strong><div id="compatLabel" style="font-weight:800;margin-top:7px"></div><div id="compatDescription" style="margin-top:5px"></div><div id="compatHash" class="fine" style="overflow-wrap:anywhere"></div></div>
+  </div>
+  <div class="wizard-section hidden" id="step2">
+   <div class="builder-head"><div><h2 data-i18n="stepTwo"></h2><p class="subtle" data-i18n="step2Desc"></p></div><span class="screen-size" id="canvasDimensions">1280 × 720 · 16:9</span></div>
+   <div class="source-strip">
+    <div class="source-tile source-active"><div class="source-tile-thumb source-preview"><img id="newpreview" alt="Selected image"></div><div class="source-tile-body"><h3 data-i18n="imageSourceTitle"></h3><p class="dim" id="lname"></p><label class="btn small" for="logo" data-i18n="chooseImage"></label><input id="logo" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp"></div></div>
+    <div class="source-tile source-original"><div class="source-tile-thumb"><img class="preview" id="oldpreview" alt="Current firmware boot logo"></div><div class="source-tile-body"><h3 data-i18n="existingLogo"></h3><p class="dim" data-i18n="sourceFirmwareLogo"></p><button class="btn small" id="extract" disabled data-i18n="extractBtn"></button></div></div>
+   </div>
+   <div class="composition-layout compact-layout">
+    <aside class="composition-column"><div class="inner-panel"><h3 data-i18n="placementTitle"></h3>
+<label class="field-label" data-i18n="fitModeLabel" for="fitMode"></label><select class="editor-select" id="fitMode"><option data-i18n="fitContain" value="contain"></option><option data-i18n="fitCover" value="cover"></option><option data-i18n="fitStretch" value="stretch"></option><option data-i18n="fitOriginal" value="original"></option></select>
+<div class="field-label between"><label data-i18n="scaleLabel" for="scaleRange"></label><output for="scaleRange" id="scaleValue">100%</output></div><input class="editor-range" id="scaleRange" max="200" min="10" step="1" type="range" value="100"/>
+<div class="field-label" data-i18n="positionLabel"></div><div class="placement-grid-wrap"><div aria-label="Image alignment" class="anchor-grid" id="anchorGrid" role="group"><button aria-label="Top left" data-anchor="top-left" type="button">↖</button><button aria-label="Top" data-anchor="top" type="button">↑</button><button aria-label="Top right" data-anchor="top-right" type="button">↗</button><button aria-label="Left" data-anchor="left" type="button">←</button><button aria-label="Center" class="active" data-anchor="center" type="button">●</button><button aria-label="Right" data-anchor="right" type="button">→</button><button aria-label="Bottom left" data-anchor="bottom-left" type="button">↙</button><button aria-label="Bottom" data-anchor="bottom" type="button">↓</button><button aria-label="Bottom right" data-anchor="bottom-right" type="button">↘</button></div>
+<div class="offsets"><div class="offset-control"><label data-i18n="offsetXLabel" for="offsetX"></label><input id="offsetX" max="4096" min="-4096" step="1" type="number" value="0"/></div><div class="offset-control"><label data-i18n="offsetYLabel" for="offsetY"></label><input id="offsetY" max="4096" min="-4096" step="1" type="number" value="0"/></div></div></div>
+<div class="placement-actions"><button class="btn small" data-i18n="resetPlacement" id="resetPlacement" type="button"></button><button class="btn small" data-i18n="centerPlacement" id="centerPlacement" type="button"></button></div>
+</div></aside>
+    <div class="composition-center">
+      <div class="inner-panel"><div class="panel-title-row"><h3 data-i18n="livePreviewTitle"></h3><label class="check-compact"><input id="showTransparency" type="checkbox"><span data-i18n="showTransparency"></span></label></div>
+        <div class="canvas-frame"><canvas id="liveCanvas" width="1280" height="720" aria-label="Live composition preview"></canvas></div><div id="compositionState" class="fine composition-state"></div>
+        <div class="preview-toolbar"><button class="btn primary" id="preflight" disabled data-i18n="previewBtn"></button><span class="fine" data-i18n="previewHelpNew"></span></div>
+      </div>
+      <div class="comparebox hidden" id="comparebox"><div class="compare-heading"><h3 data-i18n="compareTitle"></h3><button id="closePreview" class="btn small" type="button" data-i18n="closePreview" aria-label="Close final preview"></button></div><p class="comparehint" data-i18n="encodedNote"></p><div class="grid"><div><div class="preview-label" data-i18n="compareSource"></div><img alt="Input image" class="preview" id="compareOriginal"/></div><div><div class="preview-label" data-i18n="compareResult"></div><img alt="Actual encoded output" class="preview" id="compareProcessed"/></div></div><div id="comparestats"></div><p class="comparehint" id="comparehint"></p></div>
+    </div>
+    <aside class="composition-column"><div class="inner-panel"><h3 data-i18n="backgroundTitle"></h3><p class="fine" data-i18n="backgroundHelp"></p>
+<div class="bg-radio"><label><input checked="" name="bgMode" type="radio" value="solid"/><span data-i18n="bgSolid"></span></label></div>
+<div id="bgSolidPanel"><div class="color-field"><input id="bgColor" type="color" value="#000000"/><input aria-label="Background color hexadecimal" class="hex-input" id="bgColorHex" maxlength="7" type="text" value="#000000"/></div><div class="field-label" data-i18n="presetsLabel"></div><div class="swatches" id="bgSwatches"><button aria-label="Black" class="active" data-color="#000000" style="--swatch:#000000" type="button"></button><button aria-label="White" data-color="#FFFFFF" style="--swatch:#FFFFFF" type="button"></button><button aria-label="Light gray" data-color="#C9CDD3" style="--swatch:#C9CDD3" type="button"></button><button aria-label="Slate" data-color="#34465D" style="--swatch:#34465D" type="button"></button><button aria-label="Blue" data-color="#0768C9" style="--swatch:#0768C9" type="button"></button><button aria-label="Red" data-color="#ED1528" style="--swatch:#ED1528" type="button"></button></div></div>
+<div class="bg-radio"><label><input name="bgMode" type="radio" value="gradient"/><span data-i18n="bgGradient"></span></label></div>
+<div class="hidden" id="bgGradientPanel"><div class="two-color"><label><span data-i18n="colorOne"></span><input id="gradientA" type="color" value="#04122F"/></label><label><span data-i18n="colorTwo"></span><input id="gradientB" type="color" value="#0768C9"/></label></div><label class="field-label" data-i18n="gradientDirection" for="gradientDirection"></label><select class="editor-select" id="gradientDirection"><option data-i18n="directionHorizontal" value="horizontal"></option><option data-i18n="directionVertical" value="vertical"></option><option data-i18n="directionDiagonal" value="diagonal"></option></select></div>
+<div class="bg-radio"><label><input name="bgMode" type="radio" value="image"/><span data-i18n="bgImage"></span></label></div>
+<div class="hidden" id="bgImagePanel"><label class="btn full-button" data-i18n="chooseBackgroundImage" for="backgroundFile"></label><input accept="image/png,image/jpeg,image/webp,image/bmp" id="backgroundFile" type="file"/><p class="fine" id="backgroundFileName"></p><label class="field-label" data-i18n="backgroundFit" for="backgroundFit"></label><select class="editor-select" id="backgroundFit"><option data-i18n="fitCover" value="cover"></option><option data-i18n="fitContain" value="contain"></option><option data-i18n="fitStretch" value="stretch"></option></select><button class="btn small" data-i18n="removeBackground" id="clearBackgroundFile" type="button"></button></div>
+</div></aside>
+   </div>
+  </div>
+  <div class="wizard-section hidden" id="step3">
+   <h2 data-i18n="stepThree"></h2><p class="subtle" data-i18n="step3Desc"></p>
+   <div class="notice info" data-i18n="preflightMandatory"></div>
+   <p class="dim" data-i18n="generationHelp"></p>
+   <div class="notice" data-i18n="safety"></div>
+   <label class="checkline"><input id="hardwareAck" type="checkbox"><span data-i18n="hardwareAck"></span></label>
+   <label class="checkline"><input id="riskAck" type="checkbox"><span data-i18n="riskAck"></span></label>
+   <input id="outputName" type="hidden" value="">
+   <div class="action"><button class="btn primary" id="generate" disabled data-i18n="generateBtn"></button></div>
+   <p class="fine" data-i18n="nameOnceInfo"></p>
+  </div>
+  <div class="wizard-section hidden" id="step4">
+   <h2 data-i18n="firmwareReady"></h2><p class="subtle" data-i18n="step4Desc"></p><div class="notice goodbox" data-i18n="completeNote"></div><div class="action"><button class="btn primary" id="gotoVerify" data-i18n="gotoVerify"></button><button class="btn" id="gotoGuide" data-i18n="gotoGuide"></button><button class="btn" id="report2" data-i18n="reportBtn"></button><button class="btn" id="startOver" data-i18n="startOver"></button></div>
+  </div>
+  <div class="wizard-buttons"><button id="stepBack" class="btn" data-i18n="prevStep" disabled></button><button id="stepForward" class="btn primary" data-i18n="nextStep" disabled></button></div>
+ </div>
+ <div class="panel"><h2 data-i18n="results"></h2><div id="status" role="status" aria-live="polite"></div></div>
+</section>
+<section id="view-verify" class="view hidden">
+ <div class="panel"><h2 data-i18n="verifyTitle"></h2><p class="subtle" data-i18n="verifyLead"></p>
+  <div class="grid"><div class="filepanel"><div class="control"><label class="btn" for="verifyOriginal" data-i18n="verifyOriginal"></label><input id="verifyOriginal" type="file" accept=".img,application/octet-stream"></div><p class="filename" id="verifyOriginalName" data-i18n="verifyMissingOriginal"></p></div><div class="filepanel"><div class="control"><label class="btn" for="verifyCustom" data-i18n="verifyCustom"></label><input id="verifyCustom" type="file" accept=".img,application/octet-stream"></div><p class="filename" id="verifyCustomName" data-i18n="verifyMissingCustom"></p></div></div>
+  <div class="action"><button class="btn primary" id="verifyAction" data-i18n="verifyAction"></button><button class="btn" id="verifyExport" data-i18n="verifyExport" disabled></button></div>
+  <div id="verifyStatus" role="status" aria-live="polite"></div><p class="fine" data-i18n="verifyResultHint"></p>
+ </div>
+</section>
+<section id="view-guide" class="view hidden"><div class="panel"><h2 data-i18n="guideHeading"></h2><p class="subtle" data-i18n="guideIntro"></p>
+ <div class="notice info" data-i18n="guideBoundary"></div><h3 data-i18n="guideReq"></h3>
+ <ol class="guide-list"><li data-i18n="guideReq1"></li><li data-i18n="guideReq2"></li><li data-i18n="guideReq3"></li><li data-i18n="guideReq4"></li></ol>
+ <div class="notice" data-i18n="guideCaution"></div>
+ </div></section>
+<section id="view-about" class="view hidden"><div class="panel"><h2 data-i18n="aboutTitle"></h2><div class="notice info"><strong data-i18n="aboutCredit"></strong><p data-i18n="aboutVersion"></p></div><p class="subtle" data-i18n="aboutHelp"></p><p class="copyright">Copyright © 2026 Eduardo Pagaza</p></div></section>
+<footer class="footer"><span data-i18n="aboutCredit"></span> · <span data-i18n="aboutVersion"></span></footer>
+</main>
+<dialog id="saveDialog" aria-labelledby="saveDialogTitle" aria-describedby="saveDialogHelp">
+ <h2 id="saveDialogTitle" data-i18n="saveDialogTitle"></h2>
+ <p class="subtle" id="saveDialogHelp" data-i18n="saveDialogHelp"></p>
+ <label class="namefield" for="saveDialogName" data-i18n="outputLabel"></label>
+ <input class="nameinput" type="text" id="saveDialogName" maxlength="180" spellcheck="false" autocomplete="off" placeholder="Carabc_V149_Custom.img">
+ <p class="savehint" data-i18n="saveDialogNote"></p>
+ <p class="warning" id="saveDialogError" role="alert" aria-live="assertive"></p>
+ <div class="action"><button type="button" class="btn" id="saveDialogCancel" data-i18n="saveDialogCancel"></button><button type="button" class="btn primary" id="saveDialogConfirm" data-i18n="saveDialogConfirm"></button></div>
+</dialog>
+<script>
+'use strict';
+
+
+const el=id=>document.getElementById(id);
+const U32=(view,at)=>view.getUint32(at,true);
+const I18N={
+  "es": {
+    "saveDialogTitle": "Guardar firmware personalizado",
+    "saveDialogHelp": "Antes de generar el firmware, confirma o cambia el nombre del archivo .img. No se guardará con un nombre automático sin tu confirmación.",
+    "saveDialogInfo": "Al pulsar «Generar y guardar», aparecerá una ventana para confirmar o cambiar el nombre del archivo .img.",
+    "saveDialogNote": "En algunos navegadores aparecerá después «Guardar como» para elegir la carpeta. En los demás, se descargará con el nombre que confirmes aquí.",
+    "saveDialogCancel": "Cancelar",
+    "saveDialogConfirm": "Guardar archivo .img",
+
+    "appTitle": "Carabc Logo Editor",
+    "eyebrow": "CARABC · HERRAMIENTA LOCAL",
+    "lead": "Personaliza el logotipo de arranque de un firmware Allwinner IMAGEWTY y guarda un archivo .img nuevo. Todo se procesa sin conexión, en tu computadora.",
+    "one": "Selecciona el firmware original",
+    "chooseFirmware": "📁 Elegir firmware .img",
+    "noFirmware": "Ningún firmware seleccionado",
+    "compatTitle": "Compatibilidad verificada del formato:",
+    "compatText": "IMAGEWTY 0x300 y 0x403, incluidos los paquetes HW601 estudiados. La verificación es estática; no demuestra que un firmware modificado arranque en el dispositivo.",
+    "two": "Selecciona una imagen",
+    "chooseImage": "🖼️ Elegir imagen",
+    "noImage": "Ninguna imagen seleccionada",
+    "imageHelp": "JPG, PNG, BMP o WebP. Conserva las proporciones, completa con negro si hace falta y adapta la imagen al espacio disponible del firmware.",
+    "existingLogo": "Logotipo actual del firmware",
+    "chosenLogo": "Tu imagen seleccionada",
+    "compareTitle": "Comparación previa a la generación",
+    "compareSource": "Imagen seleccionada",
+    "compareResult": "Imagen que se insertará",
+    "compareHelp": "Compara el archivo elegido con el JPEG real que se insertará en el firmware.",
+    "extractBtn": "Extraer logotipo actual",
+    "previewBtn": "Previsualizar resultado",
+    "origBytes": "Imagen original",
+    "convertedBytes": "Imagen final",
+    "capacity": "Capacidad",
+    "resolution": "Resolución",
+    "processLabel": "Tratamiento",
+    "qualityWarn": "Se recomprimió para caber en el firmware. La resolución se conserva, pero podría cambiar el detalle fino.",
+    "qualityGood": "La imagen cabe sin recomprimir o con cambios mínimos.",
+    "firmwareOutput": "Crea y guarda tu firmware personalizado",
+    "outputLabel": "Nombre del archivo de salida",
+    "outputHint": "Puedes escribir el nombre que quieras. La extensión .img se añade si falta. En Edge y Chrome, el editor intentará abrir «Guardar como» para que elijas también la carpeta.",
+    "generateBtn": "⚙️ Generar y guardar firmware .img",
+    "reportBtn": "Guardar informe técnico",
+    "generationHelp": "Se modifica exclusivamente el logotipo, su longitud y su suma de comprobación. El firmware original nunca se sobrescribe.",
+    "safety": "⚠️ Un firmware que pasa la validación estática podría no ser compatible con tu dispositivo o no arrancar. Utiliza únicamente el firmware correspondiente a tu modelo y conserva una copia del original.",
+    "results": "Resultados y comprobaciones",
+    "initial": "Selecciona un firmware y una imagen para comenzar.",
+    "footer": "Herramienta comunitaria independiente, no afiliada a Carabc.",
+    "firmwareSelected": "{0} ({1} MB)",
+    "firmwareSummary": "Formato {0}",
+    "components": "{0} componentes",
+    "logoDimensions": "Logo {0} × {1}",
+    "available": "{0} disponibles",
+    "checksPassed": "{0} checksums correctos",
+    "firmwareDetail": "Logotipo en byte {0} · {1} usados · {2} libres · Diferencia de tamaño cabecera/archivo: {3} bytes. No se identifica automáticamente la revisión LCD.",
+    "readFirmware": "Leyendo el firmware y verificando su integridad...",
+    "errFileMax": "Firmware mayor de 512 MB: requiere procesamiento por bloques.",
+    "fwOk": "Firmware IMAGEWTY {0} válido. {1} checksums correctos.",
+    "fwSmall": "Espacio de logotipo reducido; podría requerir compresión elevada.",
+    "chooseNext": "Selecciona una imagen y pulsa «Previsualizar resultado».",
+    "errFirmwarePrefix": "No se puede utilizar este firmware: {0}",
+    "errImage": "No se pudo abrir la imagen seleccionada.",
+    "previewProgress": "Preparando el JPEG final para la vista previa...",
+    "previewOk": "Vista previa lista: {0}.",
+    "previewCompressed": "Revisa posibles cambios de calidad antes de generar el firmware.",
+    "previewFailed": "No se pudo crear la vista previa: {0}",
+    "jpegUntouched": "JPEG original sin recomprimir",
+    "jpegConverted": "JPEG convertido (calidad {0} %, {1})",
+    "fileMissing": "Escribe un nombre para el archivo de salida.",
+    "fileInvalid": "El nombre no puede contener / \\ : * ? \" < > | ni caracteres de control.",
+    "fileReserved": "Ese nombre está reservado por Windows. Elige otro.",
+    "fileTrailing": "El nombre no puede terminar en punto o espacio.",
+    "fileLong": "El nombre es demasiado largo (máximo 150 caracteres).",
+    "confirmLowQuality": "La imagen necesita una compresión considerable: {0}. ¿Quieres continuar?",
+    "genProgress": "Procesando imagen y comprobando firmware...",
+    "verifyProgress": "Comprobando checksums y comparando cada byte...",
+    "generatingDone": "Firmware IMAGEWTY {0} generado y verificado. {1} checksums correctos; {2} bytes distintos. {3}.",
+    "savedAs": "Archivo guardado como: {0}",
+    "downloadStarted": "Descarga iniciada: {0}.",
+    "cancelSave": "Se canceló «Guardar como»; no se generó ningún archivo.",
+    "saveFail": "No se pudo guardar: {0}",
+    "genFailed": "No se generó el firmware: {0}",
+    "lowWarn": "Advertencia: la compresión puede afectar detalles.",
+    "errNotImageWTY": "No es un archivo Allwinner IMAGEWTY reconocido.",
+    "errUnsupported": "Contenedor {0} no comprobado. Admitidos: 0x300 y 0x403.",
+    "errHeader": "Cabecera no reconocida.",
+    "errTable": "Tabla IMAGEWTY incompatible.",
+    "errIncompleteTable": "Tabla de archivos incompleta.",
+    "errEntryLength": "Tamaño de la entrada {0} no reconocido.",
+    "errEntryBounds": "Entrada {0} desalineada o fuera del archivo.",
+    "errOverlap": "Dos particiones se superponen.",
+    "errLogosCount": "Se esperaba un BOOTLOGO_FEX, encontrados: {0}.",
+    "errNoVerifier": "No se encontró VBOOTLOGO_FEX inmediatamente después del logotipo.",
+    "errOriginalJPEG": "El logotipo del firmware no es un JPEG reconocible.",
+    "errPadding": "Hay datos no nulos en el espacio libre del logotipo.",
+    "errNoChecksum": "No se encontraron checksums de partición.",
+    "errChecksum": "Checksum incorrecto en {0}. No se modificará este firmware.",
+    "errSizeDelta": "Diferencia inusual entre tamaño real y cabecera: {0} bytes.",
+    "errCanvas": "No se pudo crear el lienzo de imagen.",
+    "errConvert": "El navegador no pudo crear un JPEG.",
+    "errConvertedJPEG": "El JPEG convertido no es baseline RGB compatible.",
+    "errImageTooLarge": "No cabe en {0} ni con una compresión muy alta. Prueba una imagen más sencilla.",
+    "errTooLarge": "La imagen supera el espacio de bootlogo.",
+    "errFirmwareLength": "Cambió el tamaño total del firmware.",
+    "errUnintendedChange": "El byte {0} cambió fuera del logotipo.",
+    "errOffsets": "Cambiaron los offsets o la tabla de entradas.",
+    "errEntryChange": "Cambió la estructura de otra entrada.",
+    "reportHeader": "Carabc Logo Editor · Informe de verificación",
+    "reportNotCertified": "Validación estática. No se ha verificado la instalación ni el arranque en el dispositivo.",
+    "noLocationPicker": "El navegador no admite «Guardar como» directamente; se descargará con el nombre indicado.",
+    "reportOriginal": "FIRMWARE ORIGINAL",
+    "reportOutput": "ARCHIVO GENERADO",
+    "reportFormat": "FORMATO",
+    "reportEntries": "COMPONENTES",
+    "reportLength": "TAMAÑO",
+    "reportOriginalLogo": "LOGOTIPO ORIGINAL",
+    "reportNewLogo": "LOGOTIPO NUEVO",
+    "reportCapacity": "CAPACIDAD DEL LOGO",
+    "reportTreatment": "TRATAMIENTO",
+    "reportChanges": "BYTES MODIFICADOS",
+    "reportChecks": "CHECKSUMS VERIFICADOS",
+    "reportAllowedOnly": "CAMBIOS FUERA DE LAS ÁREAS PERMITIDAS",
+    "reportSHAOld": "SHA256 ORIGINAL",
+    "reportSHANew": "SHA256 MODIFICADO",
+    "community": "EDICIÓN COMUNITARIA · SIN CONEXIÓN",
+    "subtag": "Personaliza tu logotipo de arranque conservando el firmware oficial. No requiere internet.",
+    "navEditor": "Editor de logotipos",
+    "navVerify": "Verificar firmware",
+    "navGuide": "Guía de instalación",
+    "navAbout": "Acerca de",
+    "stepOne": "Firmware original",
+    "stepTwo": "Elegir imagen",
+    "stepThree": "Revisar y guardar",
+    "stepFour": "Siguientes pasos",
+    "step1Desc": "Selecciona únicamente el firmware original proporcionado para la revisión exacta de tu dispositivo.",
+    "step2Desc": "Selecciona y previsualiza el logotipo. Comprueba el formato JPEG real antes de continuar.",
+    "step3Desc": "Revisa las advertencias, confirma la compatibilidad del dispositivo y guarda un firmware verificado.",
+    "step4Desc": "El firmware personalizado se creó y pasó la verificación estática. Sigue las instrucciones específicas de tu dispositivo.",
+    "prevStep": "Anterior",
+    "nextStep": "Continuar",
+    "gotoGuide": "Ver guía de instalación",
+    "gotoVerify": "Verificar .img guardado",
+    "compatHeading": "Evaluación de compatibilidad",
+    "profileKnown": "Referencia probada físicamente",
+    "profileUnknown": "Estructura compatible · hardware NO verificado",
+    "profileNoData": "Selecciona un firmware original para evaluar su estructura y antecedentes de pruebas.",
+    "profileKnownDetail": "Este firmware original exacto, identificado por SHA-256, se utilizó en una instalación exitosa en Carabc HW601 / DB601 (txw38S0-nogps, febrero de 2026). No certifica otro hardware.",
+    "profileUnknownDetail": "Puede analizarse la estructura IMAGEWTY, pero este archivo original no figura entre las referencias probadas físicamente. Confirma el modelo, la revisión de placa y el firmware proporcionado por el fabricante.",
+    "originalFingerprint": "SHA-256 del firmware original",
+    "jpegProfile": "Submuestreo del JPEG original",
+    "preflightMandatory": "Primero utiliza «Previsualizar resultado». No se permite guardar hasta comprobar el perfil JPEG.",
+    "hardwareAck": "Confirmo que este firmware original corresponde exactamente a mi dispositivo y revisión de hardware.",
+    "riskAck": "Entiendo que un archivo válido puede fallar durante la instalación o el arranque. Conservo el firmware original de recuperación.",
+    "firmwareReady": "Firmware personalizado preparado",
+    "completeNote": "Conserva en un lugar seguro los archivos .img original y personalizado. Esta aplicación no instala firmware.",
+    "verifyTitle": "Comparación independiente de firmwares",
+    "verifyLead": "Selecciona el .img original del fabricante y el .img personalizado. Esta sección compara todos los bytes y valida las sumas conocidas de IMAGEWTY.",
+    "verifyOriginal": "Elegir .img original",
+    "verifyCustom": "Elegir .img personalizado",
+    "verifyMissingOriginal": "Ningún archivo original seleccionado",
+    "verifyMissingCustom": "Ningún archivo personalizado seleccionado",
+    "verifyAction": "Comparar y verificar",
+    "verifyExport": "Guardar informe de comparación",
+    "verifyInitial": "Selecciona ambos firmwares y pulsa Comparar y verificar.",
+    "verifyWait": "Analizando ambos archivos y comprobando todos los bytes…",
+    "verifyPass": "VERIFICACIÓN ESTÁTICA APROBADA: {0} checksums correctos; {1} bytes distintos; cero cambios fuera de las regiones permitidas. La compatibilidad física sigue sin confirmarse.",
+    "verifyFail": "Falló la verificación: {0}",
+    "verifySame": "Ambos archivos son idénticos byte por byte; no se encontró ningún cambio de logotipo.",
+    "verifyNoSource": "Selecciona ambos archivos antes de comparar.",
+    "verifyLayoutError": "La versión, tabla de entradas o dimensiones de componentes no coinciden.",
+    "verifyExtraError": "Diferencia inesperada en el byte {0}; modificación rechazada.",
+    "verifyLogoError": "La imagen personalizada no coincide con las dimensiones y el submuestreo JPEG baseline originales.",
+    "verifyChecksError": "El archivo original o personalizado contiene un checksum de partición incorrecto.",
+    "verifyResultHint": "Aprobar esta comparación no demuestra que el dispositivo vaya a arrancar.",
+    "guideHeading": "Guía de instalación y recuperación",
+    "guideIntro": "El editor genera y verifica archivos .img. No instala firmware ni se conecta al dispositivo.",
+    "guideReq": "Antes de comenzar",
+    "guideReq1": "Confirma modelo de pantalla, revisión de placa y compilación de firmware con el vendedor o fabricante. Nunca instales firmware de otro dispositivo.",
+    "guideReq2": "Guarda una copia intacta del firmware oficial y el reporte de verificación en otra ubicación.",
+
+    "guideReq4": "Usa un cable USB de datos fiable y alimentación estable. Evita concentradores, fuentes débiles e interrupciones durante la escritura.",
+
+    "aboutTitle": "Acerca de Carabc Logo Editor",
+
+    "aboutCredit": "Creado por Eduardo Pagaza",
+    "aboutHelp": "Proyecto comunitario independiente, sin afiliación, respaldo ni soporte oficial de Carabc, Allwinner, BMW o sus respectivos fabricantes.",
+
+    "aboutVersion": "Versión 1.0.0 — Community Edition",
+    "errJpegUnsupported": "El JPEG seleccionado no coincide con el submuestreo de color y las dimensiones del JPEG baseline original. No se generó el firmware. Utiliza una imagen compatible con su perfil.",
+    "errJpegOriginal": "El logotipo original no es un JPEG baseline de tres componentes compatible.",
+    "saveFirst": "Previsualiza el nuevo JPEG antes de guardar el firmware.",
+    "verifySourceHash": "SHA-256 original",
+    "verifyCustomHash": "SHA-256 personalizado",
+    "verifyDiff": "Bytes distintos",
+    "verifyChecksum": "Checksums correctos",
+    "saveHintExtra": "Después de guardar, utiliza Verificar firmware para comparar el archivo descargado con el original."
+    ,"privacyLicenseHeading": "Privacidad y licencia",
+    "hashUnavailable": "SHA-256 no está disponible en este navegador; no se pudo comprobar la referencia probada físicamente."
+  },
+  "en": {
+    "saveDialogTitle": "Save custom firmware",
+    "saveDialogHelp": "Before generating the firmware, confirm or change the .img filename. The default filename will never be used without your confirmation.",
+    "saveDialogInfo": "Click Generate and save to open a filename confirmation window before downloading your .img.",
+    "saveDialogNote": "Some browsers will then open Save As so you can choose the destination folder. Otherwise, the file downloads under the filename you confirm here.",
+    "saveDialogCancel": "Cancel",
+    "saveDialogConfirm": "Save .img file",
+
+    "appTitle": "Carabc Logo Editor",
+    "eyebrow": "CARABC · OFFLINE DESKTOP TOOL",
+    "lead": "Customize the startup logo in an Allwinner IMAGEWTY firmware and save a new .img file. Everything runs locally, without uploading your files.",
+    "one": "Select the original firmware",
+    "chooseFirmware": "📁 Choose firmware .img",
+    "noFirmware": "No firmware selected",
+    "compatTitle": "Verified container support:",
+    "compatText": "IMAGEWTY 0x300 and 0x403, including the HW601 packages studied. Static validation does not prove that the modified firmware will boot on your device.",
+    "two": "Choose an image",
+    "chooseImage": "🖼️ Choose image",
+    "noImage": "No image selected",
+    "imageHelp": "JPG, PNG, BMP or WebP. Keeps proportions, adds black borders when needed, and adapts the image to the available firmware space.",
+    "existingLogo": "Current firmware logo",
+    "chosenLogo": "Your selected image",
+    "compareTitle": "Preview before generating",
+    "compareSource": "Selected image",
+    "compareResult": "Image that will be embedded",
+    "compareHelp": "Compare your source with the actual JPEG that will be inserted into the firmware.",
+    "extractBtn": "Extract current logo",
+    "previewBtn": "Preview final image",
+    "origBytes": "Original image",
+    "convertedBytes": "Final image",
+    "capacity": "Capacity",
+    "resolution": "Resolution",
+    "processLabel": "Processing",
+    "qualityWarn": "Recompressed to fit the firmware. Resolution is unchanged, but fine detail may be affected.",
+    "qualityGood": "The image fits without recompression or with minimal adjustments.",
+    "firmwareOutput": "Create and save your custom firmware",
+    "outputLabel": "Output filename",
+    "outputHint": "Type any filename. The .img extension is added if missing. In Edge and Chrome, the editor will try to open Save As so you can also choose a folder.",
+    "generateBtn": "⚙️ Generate and save firmware .img",
+    "reportBtn": "Save verification report",
+    "generationHelp": "Only the logo, its length and its checksum are modified. The original firmware is never overwritten.",
+    "safety": "⚠️ Passing static validation does not guarantee device compatibility or successful boot. Use firmware intended for your exact hardware and keep the unmodified original.",
+    "results": "Results and checks",
+    "initial": "Choose a firmware and an image to get started.",
+    "footer": "Independent community tool, not affiliated with Carabc.",
+    "firmwareSelected": "{0} ({1} MB)",
+    "firmwareSummary": "Format {0}",
+    "components": "{0} components",
+    "logoDimensions": "Logo {0} × {1}",
+    "available": "{0} available",
+    "checksPassed": "{0} valid checksums",
+    "firmwareDetail": "Logo at byte {0} · {1} used · {2} free · Header/file size difference: {3} bytes. LCD revision is not detected automatically.",
+    "readFirmware": "Reading firmware and checking integrity...",
+    "errFileMax": "Firmware exceeds 512 MB; chunked processing required.",
+    "fwOk": "Valid IMAGEWTY {0} firmware. {1} checksums passed.",
+    "fwSmall": "Small logo allocation; heavy compression may be needed.",
+    "chooseNext": "Choose an image and click Preview final image.",
+    "errFirmwarePrefix": "Unable to use firmware: {0}",
+    "errImage": "Unable to open the selected image.",
+    "previewProgress": "Preparing the final JPEG preview...",
+    "previewOk": "Preview ready: {0}.",
+    "previewCompressed": "Review possible image quality differences before generating the firmware.",
+    "previewFailed": "Could not prepare preview: {0}",
+    "jpegUntouched": "Original JPEG, no recompression",
+    "jpegConverted": "Converted JPEG (quality {0}%, {1})",
+    "fileMissing": "Enter an output filename.",
+    "fileInvalid": "Filename cannot contain / \\ : * ? \" < > | or control characters.",
+    "fileReserved": "That filename is reserved on Windows. Choose another.",
+    "fileTrailing": "Filename cannot end with a dot or space.",
+    "fileLong": "Filename is too long (maximum 150 characters).",
+    "confirmLowQuality": "The image requires heavy compression: {0}. Continue?",
+    "genProgress": "Processing image and preparing firmware...",
+    "verifyProgress": "Checking all checksums and comparing every byte...",
+    "generatingDone": "IMAGEWTY {0} firmware generated and verified. {1} valid checksums; {2} bytes changed. {3}.",
+    "savedAs": "Saved file as: {0}",
+    "downloadStarted": "Download started: {0}.",
+    "cancelSave": "Save As was canceled; no file was generated.",
+    "saveFail": "Unable to save: {0}",
+    "genFailed": "Firmware was not generated: {0}",
+    "lowWarn": "Warning: compression may reduce fine detail.",
+    "errNotImageWTY": "Not a recognized Allwinner IMAGEWTY file.",
+    "errUnsupported": "Untested container {0}. Supported: 0x300 and 0x403.",
+    "errHeader": "Unrecognized firmware header.",
+    "errTable": "Unsupported IMAGEWTY table.",
+    "errIncompleteTable": "Firmware entry table is incomplete.",
+    "errEntryLength": "Entry {0} has an unknown size.",
+    "errEntryBounds": "Entry {0} is misaligned or out of bounds.",
+    "errOverlap": "Two partitions overlap.",
+    "errLogosCount": "Expected one BOOTLOGO_FEX, found {0}.",
+    "errNoVerifier": "No adjacent VBOOTLOGO_FEX found.",
+    "errOriginalJPEG": "Original firmware logo is not a recognized JPEG.",
+    "errPadding": "Unused logo space contains nonzero bytes.",
+    "errNoChecksum": "No partition checksums found.",
+    "errChecksum": "Bad checksum in {0}. Firmware will not be modified.",
+    "errSizeDelta": "Unusual file/header size difference: {0} bytes.",
+    "errCanvas": "Could not create the image canvas.",
+    "errConvert": "Browser failed to create JPEG.",
+    "errConvertedJPEG": "Converted JPEG is not compatible baseline RGB.",
+    "errImageTooLarge": "Image will not fit within {0}, even with heavy compression. Try a simpler image.",
+    "errTooLarge": "Image exceeds bootlogo capacity.",
+    "errFirmwareLength": "Firmware size changed unexpectedly.",
+    "errUnintendedChange": "Byte {0} changed outside the logo.",
+    "errOffsets": "Offsets or file entries unexpectedly changed.",
+    "errEntryChange": "Another entry structure was modified.",
+    "reportHeader": "Carabc Logo Editor · Verification report",
+    "reportNotCertified": "Static validation only. Installation and boot have not been tested on the device.",
+    "noLocationPicker": "Your browser does not support direct Save As; the image will download using the chosen filename.",
+    "reportOriginal": "ORIGINAL FIRMWARE",
+    "reportOutput": "OUTPUT FILE",
+    "reportFormat": "FORMAT",
+    "reportEntries": "ENTRIES",
+    "reportLength": "SIZE",
+    "reportOriginalLogo": "ORIGINAL LOGO",
+    "reportNewLogo": "NEW LOGO",
+    "reportCapacity": "LOGO CAPACITY",
+    "reportTreatment": "IMAGE PROCESSING",
+    "reportChanges": "CHANGED BYTES",
+    "reportChecks": "VERIFIED CHECKSUMS",
+    "reportAllowedOnly": "CHANGES OUTSIDE ALLOWED REGIONS",
+    "reportSHAOld": "ORIGINAL SHA256",
+    "reportSHANew": "MODIFIED SHA256",
+    "community": "COMMUNITY EDITION · OFFLINE",
+    "subtag": "Customize your startup logo while preserving the official firmware. No internet required.",
+    "navEditor": "Logo Editor",
+    "navVerify": "Verify Firmware",
+    "navGuide": "Installation Guide",
+    "navAbout": "About",
+    "stepOne": "Original firmware",
+    "stepTwo": "Choose image",
+    "stepThree": "Review & save",
+    "stepFour": "Next steps",
+    "step1Desc": "Choose only the original firmware supplied for your exact device revision.",
+    "step2Desc": "Choose and preview your new boot logo. Run the preview to verify its actual JPEG format before continuing.",
+    "step3Desc": "Review the warnings, explicitly confirm device compatibility, and save a verified custom image.",
+    "step4Desc": "Your custom firmware has been created and statically verified. Follow the device-specific installation guidance.",
+    "prevStep": "Back",
+    "nextStep": "Continue",
+    "gotoGuide": "View installation guide",
+    "gotoVerify": "Verify saved .img",
+    "compatHeading": "Compatibility assessment",
+    "profileKnown": "Hardware-tested reference",
+    "profileUnknown": "Structure supported · hardware NOT verified",
+    "profileNoData": "Choose an original firmware to assess its structure and known test status.",
+    "profileKnownDetail": "This exact original firmware SHA-256 was used in a successful installation on a Carabc HW601 / DB601 (txw38S0-nogps, Feb 2026). This does not certify other hardware.",
+    "profileUnknownDetail": "The IMAGEWTY structure can be examined, but this precise original file is not in the hardware-tested reference list. Confirm your exact model, board revision and supplier-provided firmware before proceeding.",
+    "originalFingerprint": "Original firmware SHA-256",
+    "jpegProfile": "Original JPEG sampling",
+    "preflightMandatory": "Run “Preview result” first. Saving is disabled until the image passes JPEG-profile checks.",
+    "hardwareAck": "I confirm this original firmware was supplied for my exact device and hardware revision.",
+    "riskAck": "I understand a structurally valid image can still fail to flash or boot. I have preserved the original recovery firmware.",
+    "firmwareReady": "Custom firmware prepared",
+    "completeNote": "Keep the original and customized .img files in a safe place. This application does not install firmware.",
+    "verifyTitle": "Independent firmware comparison",
+    "verifyLead": "Select the supplier-provided original .img and a custom .img. This tab independently compares every byte and checks the known IMAGEWTY checksums.",
+    "verifyOriginal": "Choose original .img",
+    "verifyCustom": "Choose custom .img",
+    "verifyMissingOriginal": "No original file selected",
+    "verifyMissingCustom": "No custom file selected",
+    "verifyAction": "Compare and verify",
+    "verifyExport": "Save comparison report",
+    "verifyInitial": "Select both firmware files, then click Compare and verify.",
+    "verifyWait": "Parsing both images and checking all bytes…",
+    "verifyPass": "STATIC VERIFICATION PASSED: {0} checksums valid; {1} changed bytes; zero bytes modified outside the permitted regions. Hardware compatibility remains unverified.",
+    "verifyFail": "Verification failed: {0}",
+    "verifySame": "Both files are byte-for-byte identical; no boot logo change was found.",
+    "verifyNoSource": "Select both files before comparing.",
+    "verifyLayoutError": "Container versions, table entries or component dimensions do not match.",
+    "verifyExtraError": "Unexpected difference at byte offset {0}; modification rejected.",
+    "verifyLogoError": "The custom image does not match the original JPEG baseline dimensions and chroma sampling.",
+    "verifyChecksError": "The source or output contains an invalid partition checksum.",
+    "verifyResultHint": "Passing this comparison does not prove that your device will boot.",
+    "guideHeading": "Flashing and recovery guide",
+    "guideIntro": "The editor generates and verifies .img files. It does not flash firmware or connect to your device.",
+    "guideReq": "Before you begin",
+    "guideReq1": "Confirm the exact screen model, board revision and firmware build with the seller or manufacturer. Never cross-flash a different device.",
+    "guideReq2": "Keep an untouched copy of the official firmware and the verification report in a separate location.",
+
+    "guideReq4": "Use a reliable USB data cable and stable device power. Avoid hubs, weak power supplies and interruption during flashing.",
+
+    "aboutTitle": "About Carabc Logo Editor",
+
+    "aboutCredit": "Created by Eduardo Pagaza",
+    "aboutHelp": "Independent community project. Not affiliated with, endorsed by, or officially supported by Carabc, Allwinner, BMW or their respective manufacturers.",
+
+    "aboutVersion": "Version 1.0.0 — Community Edition",
+    "errJpegUnsupported": "The selected JPEG does not match the original baseline JPEG chroma sampling and dimensions. No output was generated. Use an image compatible with the original JPEG profile.",
+    "errJpegOriginal": "The original boot logo is not a supported baseline three-component JPEG.",
+    "saveFirst": "Preview the new JPEG before saving your firmware.",
+    "verifySourceHash": "Original SHA-256",
+    "verifyCustomHash": "Custom SHA-256",
+    "verifyDiff": "Changed bytes",
+    "verifyChecksum": "Verified checksums",
+    "saveHintExtra": "After saving, use the independent Verify Firmware tab to compare your saved file to its original."
+    ,"privacyLicenseHeading": "Privacy & license",
+    "hashUnavailable": "SHA-256 is unavailable in this browser; hardware-tested identification could not be verified."
+  },
+  "zh-CN": {
+    "saveDialogTitle": "保存自定义固件",
+    "saveDialogHelp": "生成固件之前，请确认或修改 .img 文件名。未经确认不会自动使用默认文件名。",
+    "saveDialogInfo": "点击“生成并保存”后，会先弹出窗口供您确认或修改 .img 文件名。",
+    "saveDialogNote": "某些浏览器随后会打开“另存为”以选择文件夹；其他浏览器则按您确认的文件名下载。",
+    "saveDialogCancel": "取消",
+    "saveDialogConfirm": "保存 .img 文件",
+
+    "appTitle": "Carabc 开机图编辑器",
+    "eyebrow": "CARABC · 本地离线工具",
+    "lead": "为 Allwinner IMAGEWTY 固件更换开机图片并另存为新的 .img 文件。全部操作在本机完成，不上传文件。",
+    "one": "选择原始固件",
+    "chooseFirmware": "📁 选择固件 .img",
+    "noFirmware": "尚未选择固件",
+    "compatTitle": "已验证的容器格式：",
+    "compatText": "支持 IMAGEWTY 0x300 和 0x403（包括已分析的 HW601 固件）。静态校验并不保证修改后的固件能够在设备上启动。",
+    "two": "选择图片",
+    "chooseImage": "🖼️ 选择图片",
+    "noImage": "尚未选择图片",
+    "imageHelp": "支持 JPG、PNG、BMP 和 WebP。保持原图比例，必要时填充黑边，并适配固件中预留的容量。",
+    "existingLogo": "固件当前开机图片",
+    "chosenLogo": "已选择的图片",
+    "compareTitle": "生成前预览对比",
+    "compareSource": "所选原图",
+    "compareResult": "将写入固件的图片",
+    "compareHelp": "将原图与实际要写入固件的 JPEG 图片进行对比。",
+    "extractBtn": "提取当前开机图片",
+    "previewBtn": "预览最终图片",
+    "origBytes": "原图大小",
+    "convertedBytes": "生成图片大小",
+    "capacity": "容量限制",
+    "resolution": "分辨率",
+    "processLabel": "处理方式",
+    "qualityWarn": "图片已重新压缩以适应固件容量。分辨率未变，但细节可能有所损失。",
+    "qualityGood": "图片无需重新压缩，或只进行很小的调整。",
+    "firmwareOutput": "生成并保存自定义固件",
+    "outputLabel": "输出文件名",
+    "outputHint": "可自定义文件名；未输入 .img 扩展名时会自动添加。在 Edge 或 Chrome 中，将尝试打开“另存为”对话框以选择保存文件夹。",
+    "generateBtn": "⚙️ 生成并保存固件 .img",
+    "reportBtn": "保存校验报告",
+    "generationHelp": "仅修改开机图片、图片长度和校验和，原始固件文件不会被覆盖。",
+    "safety": "⚠️ 通过静态验证不代表固件与设备兼容，也不保证可以成功启动。请仅使用适用于您设备型号的固件，并妥善保留未修改的原始文件。",
+    "results": "结果与校验",
+    "initial": "请先选择固件和图片。",
+    "footer": "独立社区工具，与 Carabc 官方无关。",
+    "firmwareSelected": "{0}（{1} MB）",
+    "firmwareSummary": "格式 {0}",
+    "components": "{0} 个组件",
+    "logoDimensions": "图片 {0} × {1}",
+    "available": "可用 {0}",
+    "checksPassed": "{0} 项校验通过",
+    "firmwareDetail": "图片起始字节 {0} · 已使用 {1} · 剩余 {2} · 头部与文件大小差：{3} 字节。无法自动确定 LCD 硬件版本。",
+    "readFirmware": "正在读取固件并验证完整性…",
+    "errFileMax": "固件超过 512 MB，需使用分块处理版本。",
+    "fwOk": "固件 IMAGEWTY {0} 验证成功，{1} 项校验通过。",
+    "fwSmall": "开机图片空间较小，可能需要较高压缩率。",
+    "chooseNext": "选择图片后点击“预览最终图片”。",
+    "errFirmwarePrefix": "无法使用此固件：{0}",
+    "errImage": "无法打开所选图片。",
+    "previewProgress": "正在生成最终 JPEG 预览…",
+    "previewOk": "预览已就绪：{0}。",
+    "previewCompressed": "生成固件之前请检查压缩后是否存在画质差异。",
+    "previewFailed": "无法生成预览：{0}",
+    "jpegUntouched": "原始 JPEG，未重新压缩",
+    "jpegConverted": "JPEG 已转换（质量 {0}%，{1}）",
+    "fileMissing": "请输入输出文件名。",
+    "fileInvalid": "文件名不得包含 / \\ : * ? \" < > | 或控制字符。",
+    "fileReserved": "该文件名是 Windows 的保留名称，请更换。",
+    "fileTrailing": "文件名末尾不能是句点或空格。",
+    "fileLong": "文件名过长（最多 150 个字符）。",
+    "confirmLowQuality": "图片需要较高压缩率：{0}。是否继续？",
+    "genProgress": "正在处理图片并准备固件…",
+    "verifyProgress": "正在验证校验和并逐字节比较…",
+    "generatingDone": "固件 IMAGEWTY {0} 已生成并验证。通过 {1} 项校验；更改了 {2} 个字节。{3}。",
+    "savedAs": "已保存为：{0}",
+    "downloadStarted": "已开始下载：{0}。",
+    "cancelSave": "已取消“另存为”，未生成文件。",
+    "saveFail": "保存失败：{0}",
+    "genFailed": "无法生成固件：{0}",
+    "lowWarn": "警告：压缩可能损失部分细节。",
+    "errNotImageWTY": "不是可识别的 Allwinner IMAGEWTY 文件。",
+    "errUnsupported": "未经验证的容器格式 {0}，仅支持 0x300 和 0x403。",
+    "errHeader": "固件头部格式无法识别。",
+    "errTable": "IMAGEWTY 文件表结构不兼容。",
+    "errIncompleteTable": "固件文件表不完整。",
+    "errEntryLength": "条目 {0} 的大小未知。",
+    "errEntryBounds": "条目 {0} 越界或未对齐。",
+    "errOverlap": "两个分区的范围重叠。",
+    "errLogosCount": "应有一个 BOOTLOGO_FEX，实际找到 {0} 个。",
+    "errNoVerifier": "没有找到相邻的 VBOOTLOGO_FEX。",
+    "errOriginalJPEG": "固件中的原始开机图片不是可识别的 JPEG。",
+    "errPadding": "开机图片的空余区域包含非零数据。",
+    "errNoChecksum": "未找到分区校验和。",
+    "errChecksum": "{0} 校验失败，不会修改固件。",
+    "errSizeDelta": "文件与头部大小差异常：{0} 字节。",
+    "errCanvas": "无法创建画布。",
+    "errConvert": "浏览器无法生成 JPEG。",
+    "errConvertedJPEG": "生成的 JPEG 不是兼容的 baseline RGB 格式。",
+    "errImageTooLarge": "即使高压缩也无法放入 {0} 的空间。请使用更简单的图片。",
+    "errTooLarge": "图片超过开机图分区的容量。",
+    "errFirmwareLength": "固件总大小发生了变化。",
+    "errUnintendedChange": "字节 {0} 在开机图区域之外被修改。",
+    "errOffsets": "偏移或文件表结构发生了意外变化。",
+    "errEntryChange": "其他条目的结构被修改。",
+    "reportHeader": "Carabc Logo Editor · 校验报告",
+    "reportNotCertified": "仅完成静态校验，尚未在设备上验证写入及启动。",
+    "noLocationPicker": "浏览器不支持直接“另存为”；文件将按指定名称下载。",
+    "reportOriginal": "原始固件",
+    "reportOutput": "输出文件",
+    "reportFormat": "格式",
+    "reportEntries": "组件数",
+    "reportLength": "文件大小",
+    "reportOriginalLogo": "原始图片大小",
+    "reportNewLogo": "新图片大小",
+    "reportCapacity": "图片空间",
+    "reportTreatment": "图片处理",
+    "reportChanges": "变更字节数",
+    "reportChecks": "通过校验数",
+    "reportAllowedOnly": "允许区域外的变更数",
+    "reportSHAOld": "原始 SHA256",
+    "reportSHANew": "修改后 SHA256",
+    "community": "社区版 · 离线工具",
+    "subtag": "在保留官方固件的情况下自定义启动标志，无需联网。",
+    "navEditor": "启动图编辑",
+    "navVerify": "校验固件",
+    "navGuide": "刷机指南",
+    "navAbout": "关于",
+    "stepOne": "原始固件",
+    "stepTwo": "选择图片",
+    "stepThree": "检查并保存",
+    "stepFour": "后续步骤",
+    "step1Desc": "只选择厂商为您设备的确切硬件版本提供的原始固件。",
+    "step2Desc": "选择并预览启动图片。继续前请验证实际的 JPEG 格式。",
+    "step3Desc": "阅读风险提示，确认设备匹配，然后保存经过静态验证的固件。",
+    "step4Desc": "自定义固件已生成，并通过静态校验。请遵循您设备专用的刷机说明。",
+    "prevStep": "上一步",
+    "nextStep": "继续",
+    "gotoGuide": "查看安装指南",
+    "gotoVerify": "验证已保存的 .img",
+    "compatHeading": "兼容性评估",
+    "profileKnown": "已有实体设备测试记录",
+    "profileUnknown": "结构支持 · 未验证硬件",
+    "profileNoData": "请先选择原始固件，以检查其结构和测试记录。",
+    "profileKnownDetail": "该原始固件的 SHA-256 与 Carabc HW601 / DB601（2026 年 2 月，txw38S0-nogps）上成功刷写的文件完全一致。这不代表其他硬件也兼容。",
+    "profileUnknownDetail": "程序可以分析该 IMAGEWTY 结构，但尚无此确切原始固件的实体设备测试记录。请先向厂商确认型号、主板版本和固件来源。",
+    "originalFingerprint": "原始固件 SHA-256",
+    "jpegProfile": "原始 JPEG 色度采样",
+    "preflightMandatory": "请先点击“预览结果”。未验证 JPEG 参数前不能保存。",
+    "hardwareAck": "我确认原始固件由厂商为我设备的确切硬件版本提供。",
+    "riskAck": "我明白通过静态校验的文件仍可能刷写或启动失败，并已保留原始恢复固件。",
+    "firmwareReady": "自定义固件已准备就绪",
+    "completeNote": "请妥善保管原始和修改后的 .img 文件。本应用不负责安装固件。",
+    "verifyTitle": "独立固件比较",
+    "verifyLead": "请选择厂商原始 .img 和自定义 .img。本功能会逐字节比较，并核验已识别的 IMAGEWTY 校验和。",
+    "verifyOriginal": "选择原始 .img",
+    "verifyCustom": "选择自定义 .img",
+    "verifyMissingOriginal": "未选择原始文件",
+    "verifyMissingCustom": "未选择自定义文件",
+    "verifyAction": "比较并验证",
+    "verifyExport": "保存比较报告",
+    "verifyInitial": "请选择两个固件文件，再点击比较并验证。",
+    "verifyWait": "正在解析两个文件并逐字节核对…",
+    "verifyPass": "静态校验通过：{0} 项校验和正确，{1} 字节发生变化，允许区域外无更改。硬件兼容性仍未验证。",
+    "verifyFail": "校验失败：{0}",
+    "verifySame": "两个文件逐字节相同，未发现启动图片修改。",
+    "verifyNoSource": "请先选择两个文件。",
+    "verifyLayoutError": "容器版本、条目表或组件大小不匹配。",
+    "verifyExtraError": "偏移 {0} 处有意外修改，已拒绝。",
+    "verifyLogoError": "自定义图片的 baseline JPEG 尺寸或色度采样与原图不一致。",
+    "verifyChecksError": "原始或自定义固件的分区校验和错误。",
+    "verifyResultHint": "静态校验通过并不能保证设备成功启动。",
+    "guideHeading": "刷机及恢复指南",
+    "guideIntro": "本编辑器只生成并验证 .img 文件，不会安装固件或连接设备。",
+    "guideReq": "开始之前",
+    "guideReq1": "向卖家或厂商核对屏幕型号、主板版本及固件版本。切勿刷入其他设备的固件。",
+    "guideReq2": "在独立位置保留未经修改的官方固件以及验证报告。",
+
+    "guideReq4": "使用可靠的 USB 数据线和稳定的供电。刷写过程中避免 USB 集线器、电源不足和连接中断。",
+
+    "aboutTitle": "关于 Carabc Logo Editor",
+
+    "aboutCredit": "创建者：Eduardo Pagaza",
+    "aboutHelp": "独立社区项目，与 Carabc、Allwinner、BMW 或其相关制造商无隶属关系，也未获得其认可或官方支持。",
+
+    "aboutVersion": "版本 1.0.0 — Community Edition",
+    "errJpegUnsupported": "所选 JPEG 与原始 baseline JPEG 的尺寸或色度采样不匹配，因此未生成固件。请使用匹配原图参数的图片。",
+    "errJpegOriginal": "原固件启动图不是受支持的三分量 baseline JPEG。",
+    "saveFirst": "请先预览新 JPEG，再保存固件。",
+    "verifySourceHash": "原始 SHA-256",
+    "verifyCustomHash": "自定义 SHA-256",
+    "verifyDiff": "变化字节数",
+    "verifyChecksum": "正确校验和数",
+    "saveHintExtra": "保存后，建议使用“校验固件”功能比较下载的 .img 和原始文件。"
+    ,"privacyLicenseHeading": "隐私与许可证",
+    "hashUnavailable": "此浏览器无法计算 SHA-256，因此不能确认是否匹配经过硬件测试的固件。"
+  }
+};
+
+
+// Image composition strings · independent of the original firmware engine
+Object.assign(I18N["en"],{"imageSourceTitle": "1. Select image", "placementTitle": "2. Image placement", "fitModeLabel": "Fit mode", "fitContain": "Fit · keep aspect ratio", "fitCover": "Fill · crop to canvas", "fitStretch": "Stretch · may distort", "fitOriginal": "Original pixels", "scaleLabel": "Scale", "positionLabel": "Alignment", "offsetXLabel": "X offset (px)", "offsetYLabel": "Y offset (px)", "resetPlacement": "↺ Reset position", "centerPlacement": "⊕ Center", "livePreviewTitle": "Live canvas preview", "livePreviewHint": "Before JPEG encoding", "showTransparency": "Show transparency checkerboard for preview", "sourceFirmwareLogo": "Official image", "backgroundTitle": "3. Background options", "backgroundHelp": "The selected background is merged with transparent areas into an opaque JPEG.", "bgSolid": "Solid color", "presetsLabel": "Quick presets", "bgGradient": "Gradient", "colorOne": "Color 1", "colorTwo": "Color 2", "gradientDirection": "Direction", "directionHorizontal": "Horizontal", "directionVertical": "Vertical", "directionDiagonal": "Diagonal", "bgImage": "Background image", "chooseBackgroundImage": "Choose background image", "backgroundFit": "Background fit", "removeBackground": "Remove image", "exportSettingsTitle": "4. Export settings", "flattenInfo": "The selected background is merged into the final JPEG (no transparent output).", "encodedImageInfo": "Preview the real encoded JPEG and run integrity checks before saving.", "opacityWarning": "An opaque source photo covers the background; select a transparent PNG to see the color behind it.", "encodedNote": "Right: exact JPEG prepared for firmware, including compression.", "compositionPending": "Select an image to see the composition.", "compositionNeedsPreflight": "Edited composition · run Preview result again before saving.", "bgMissing": "Choose a background image or switch to another background mode.", "backgroundFileTooLarge": "Background image is too large (maximum 25 MiB).", "imageTooLargeForBrowser": "Image dimensions are too large for safe local processing.", "compositionDimensions": "Canvas: {0} × {1} · scale {2}% · {3}", "presetBlack": "Black", "presetWhite": "White", "presetGray": "Gray", "presetBlue": "Blue", "presetDark": "Dark", "presetGradient": "Gradient"});
+Object.assign(I18N["es"],{"imageSourceTitle": "1. Seleccionar imagen", "placementTitle": "2. Posición de la imagen", "fitModeLabel": "Modo de ajuste", "fitContain": "Encajar · conservar proporciones", "fitCover": "Rellenar · recortar", "fitStretch": "Estirar · puede deformar", "fitOriginal": "Píxeles originales", "scaleLabel": "Escala", "positionLabel": "Alineación", "offsetXLabel": "Desplazamiento X (px)", "offsetYLabel": "Desplazamiento Y (px)", "resetPlacement": "↺ Restablecer posición", "centerPlacement": "⊕ Centrar", "livePreviewTitle": "Vista previa del lienzo", "livePreviewHint": "Antes de codificar el JPEG", "showTransparency": "Mostrar cuadrícula de transparencia solo en vista previa", "sourceFirmwareLogo": "Imagen oficial", "backgroundTitle": "3. Opciones de fondo", "backgroundHelp": "El fondo elegido se fusiona con la transparencia para obtener un JPEG opaco.", "bgSolid": "Color sólido", "presetsLabel": "Colores rápidos", "bgGradient": "Degradado", "colorOne": "Color 1", "colorTwo": "Color 2", "gradientDirection": "Dirección", "directionHorizontal": "Horizontal", "directionVertical": "Vertical", "directionDiagonal": "Diagonal", "bgImage": "Imagen de fondo", "chooseBackgroundImage": "Elegir imagen de fondo", "backgroundFit": "Ajuste del fondo", "removeBackground": "Quitar imagen", "exportSettingsTitle": "4. Configuración de exportación", "flattenInfo": "El fondo seleccionado se fusiona en el JPEG final (sin transparencia).", "encodedImageInfo": "Revisa el JPEG real y ejecuta las verificaciones antes de guardar.", "opacityWarning": "Una imagen opaca tapa el fondo; utiliza PNG transparente para ver el color detrás.", "encodedNote": "A la derecha: JPEG exacto preparado para el firmware, incluida la compresión.", "compositionPending": "Selecciona una imagen para ver la composición.", "compositionNeedsPreflight": "Composición modificada · vuelve a previsualizar antes de guardar.", "bgMissing": "Elige una imagen de fondo o cambia a otro modo.", "backgroundFileTooLarge": "La imagen de fondo supera el máximo de 25 MiB.", "imageTooLargeForBrowser": "Las dimensiones de la imagen son demasiado grandes para procesarla de forma segura.", "compositionDimensions": "Lienzo: {0} × {1} · escala {2}% · {3}", "presetBlack": "Negro", "presetWhite": "Blanco", "presetGray": "Gris", "presetBlue": "Azul", "presetDark": "Oscuro", "presetGradient": "Degradado"});
+Object.assign(I18N["zh-CN"],{"imageSourceTitle": "1. 选择图片", "placementTitle": "2. 图片位置", "fitModeLabel": "适配模式", "fitContain": "适应 · 保持宽高比", "fitCover": "填充 · 裁剪边缘", "fitStretch": "拉伸 · 可能变形", "fitOriginal": "原始像素尺寸", "scaleLabel": "缩放", "positionLabel": "对齐方式", "offsetXLabel": "X 偏移（像素）", "offsetYLabel": "Y 偏移（像素）", "resetPlacement": "↺ 重置位置", "centerPlacement": "⊕ 居中", "livePreviewTitle": "画布实时预览", "livePreviewHint": "JPEG 编码前", "showTransparency": "仅预览时显示透明棋盘格", "sourceFirmwareLogo": "原厂图片", "backgroundTitle": "3. 背景设置", "backgroundHelp": "选定背景将与透明区域合成为不透明的 JPEG 图片。", "bgSolid": "纯色", "presetsLabel": "快捷颜色", "bgGradient": "渐变", "colorOne": "颜色 1", "colorTwo": "颜色 2", "gradientDirection": "方向", "directionHorizontal": "水平", "directionVertical": "垂直", "directionDiagonal": "对角", "bgImage": "背景图片", "chooseBackgroundImage": "选择背景图片", "backgroundFit": "背景适配", "removeBackground": "移除图片", "exportSettingsTitle": "4. 导出设置", "flattenInfo": "所选背景将合并至最终 JPEG（不保留透明度）。", "encodedImageInfo": "保存前检查实际编码的 JPEG 与固件完整性。", "opacityWarning": "不透明图片会遮住背景；使用透明 PNG 才能看到底色。", "encodedNote": "右侧为实际写入固件的 JPEG，包含压缩效果。", "compositionPending": "请选择图片以查看合成效果。", "compositionNeedsPreflight": "合成已修改 · 保存前请重新预览。", "bgMissing": "请选择背景图片或切换背景模式。", "backgroundFileTooLarge": "背景图片超过 25 MiB 限制。", "imageTooLargeForBrowser": "图片尺寸过大，无法安全地在本地处理。", "compositionDimensions": "画布：{0} × {1} · 缩放 {2}% · {3}", "presetBlack": "黑色", "presetWhite": "白色", "presetGray": "灰色", "presetBlue": "蓝色", "presetDark": "深色", "presetGradient": "渐变"});
+
+I18N["en"].imageHelp="JPG, PNG, BMP or WebP. Set fit, scale, position and background. The final JPEG uses the dimensions and color sampling of the original firmware.";
+I18N["es"].imageHelp="JPG, PNG, BMP o WebP. Ajusta tamaño, posición y fondo. El JPEG final respeta las dimensiones y el muestreo de color del firmware original.";
+I18N["zh-CN"].imageHelp="支持 JPG、PNG、BMP 和 WebP。可调整尺寸、位置和背景。最终 JPEG 保持原固件的尺寸和色度采样。";
+// Simplified v1.0.0 navigation and save flow
+Object.assign(I18N.en,{closePreview:'✕ Close preview',previewHelpNew:'Check the actual encoded JPEG before continuing.',nameOnceInfo:'Choose the firmware filename once when you click Generate and save. The native Save As dialog is used where available; otherwise an in-app filename dialog is shown.',startOver:'↻ Start a new firmware',step3Desc:'Review the warnings and generate your customized image. The filename will be requested when saving.',saveDialogHelp:'Choose a filename for your customized .img. It will be used for the download.',saveDialogNote:'Your browser may ask for a destination folder depending on its download settings.',step4Desc:'The process is complete. Save the report, verify the firmware, or start a completely new editing session.',imageSourceTitle:'Selected image',placementTitle:'Image placement',livePreviewTitle:'Live preview',backgroundTitle:'Background options'});
+Object.assign(I18N.es,{closePreview:'✕ Cerrar vista previa',previewHelpNew:'Comprueba el JPEG realmente codificado antes de continuar.',nameOnceInfo:'Escoge el nombre una sola vez al pulsar Generar y guardar. Se usa «Guardar como» cuando está disponible; de lo contrario aparece la ventana del editor.',startOver:'↻ Comenzar otro firmware',step3Desc:'Revisa las advertencias y genera la imagen personalizada. El nombre se solicitará al guardarla.',saveDialogHelp:'Elige el nombre de tu firmware .img personalizado. Se utilizará en la descarga.',saveDialogNote:'El navegador podría solicitar la carpeta de destino según su configuración de descargas.',step4Desc:'El proceso ha terminado. Puedes guardar el reporte, verificar el firmware o iniciar una sesión de edición nueva.',imageSourceTitle:'Imagen seleccionada',placementTitle:'Posición y tamaño',livePreviewTitle:'Vista previa',backgroundTitle:'Opciones de fondo'});
+Object.assign(I18N['zh-CN'],{closePreview:'✕ 关闭预览',previewHelpNew:'继续前请检查实际编码的 JPEG 图片。',nameOnceInfo:'点击“生成并保存”时只需选择一次文件名。支持系统“另存为”时直接使用；否则显示应用内文件名窗口。',startOver:'↻ 开始新的固件编辑',step3Desc:'检查风险提示并生成自定义固件。保存时将要求输入文件名。',saveDialogHelp:'为自定义 .img 固件选择文件名，该名称将用于下载。',saveDialogNote:'根据浏览器下载设置，可能还需要选择保存文件夹。',step4Desc:'编辑流程已结束。可以保存报告、验证固件或重新开始新的编辑。',imageSourceTitle:'已选图片',placementTitle:'图像位置与尺寸',livePreviewTitle:'实时预览',backgroundTitle:'背景选项'});
+
+// Community Edition: a known device is identified ONLY by the unmodified firmware hash.
+const KNOWN_HARDWARE_ORIGINALS=new Map([
+ ['5b6cf7a6b446943912ff4a20501d9b005c893b664bfde8e175556e8da1e0f9fc',{id:'Carabc HW601/DB601 · txw38S0-nogps · Feb 2026 · V1.49'}]
+]);
+let fwHash='', appTab='editor', wizardStep=1, outputReady=false, verifyReportText='', verifyBusy=false, verifyDisplayState=null, previewVisible=false;
+const $step=n=>el('step'+n);
+function jpegProfile(bytes){
+ if(bytes.length<20||bytes[0]!==255||bytes[1]!==216||bytes[bytes.length-2]!==255||bytes[bytes.length-1]!==217)return null;
+ let i=2,frame=null;
+ while(i+3<bytes.length){
+  if(bytes[i++]!==255)return null;
+  while(i<bytes.length&&bytes[i]===255)i++;
+  const marker=bytes[i++];
+  if(marker===218)break;
+  if(marker===1||(marker>=208&&marker<=215))continue;
+  if(i+2>bytes.length)return null;
+  const size=(bytes[i]<<8)|bytes[i+1];
+  if(size<2||i+size>bytes.length)return null;
+  if(marker>=192&&marker<=207&&![196,200,204].includes(marker)){
+   if(frame||marker!==192||size<17)return null;
+   const precision=bytes[i+2],height=(bytes[i+3]<<8)|bytes[i+4],width=(bytes[i+5]<<8)|bytes[i+6],components=bytes[i+7];
+   if(precision!==8||components!==3||size<8+3*components)return null;
+   const sampling=[];
+   for(let c=0;c<components;c++)sampling.push(bytes[i+8+3*c+1]);
+   frame={width,height,sampling:sampling.map(x=>x.toString(16).padStart(2,'0')).join('-'),baseline:true};
+  }
+  i+=size;
+ }
+ return frame;
+}
+function sameJpegProfile(a,b){return !!(a&&b&&a.width===b.width&&a.height===b.height&&a.sampling===b.sampling)}
+function samplingLabel(profile){if(!profile)return 'unknown';return ({'22-11-11':'4:2:0','21-11-11':'4:2:2','11-11-11':'4:4:4'})[profile.sampling]||profile.sampling}
+function updateCompatibility(){
+ const valid=!!inspection;
+ el('compatLabel').textContent=valid?t(fwHash&&KNOWN_HARDWARE_ORIGINALS.has(fwHash)?'profileKnown':'profileUnknown'):'';
+ el('compatDescription').textContent=valid?t(fwHash&&KNOWN_HARDWARE_ORIGINALS.has(fwHash)?'profileKnownDetail':'profileUnknownDetail'):t('profileNoData');
+ el('compatHash').textContent=valid?t('originalFingerprint')+': '+(fwHash?.length===64?fwHash:t('hashUnavailable'))+' · '+t('jpegProfile')+': '+samplingLabel(inspection.jpegProfile):'';
+}
+function updateWizard(){
+ for(let n=1;n<=4;n++){const section=$step(n);section.classList.toggle('hidden',n!==wizardStep);section.setAttribute('aria-hidden',n===wizardStep?'false':'true')}
+ document.querySelectorAll('.step-indicator').forEach((bar,i)=>bar.classList.toggle('active',i<wizardStep));
+ el('stepLabel').textContent=wizardStep+' / 4 · '+t(['stepOne','stepTwo','stepThree','stepFour'][wizardStep-1]);
+ el('stepBack').classList.toggle('hidden',wizardStep===4);
+ el('stepBack').disabled=wizardStep===1||busy;
+ el('stepForward').classList.toggle('hidden',wizardStep>=3);
+ el('stepForward').disabled=busy||(wizardStep===1&&!inspection)||(wizardStep===2&&!lastPrepared);
+ el('generate').disabled=busy||!(inspection&&logoFile&&lastPrepared&&el('hardwareAck').checked&&el('riskAck').checked);
+ el('report2').disabled=!reportText||busy;
+}
+function goStep(n){
+ if(n<1||n>4||wizardStep===4&&n!==4)return;
+ if(n>wizardStep){if(wizardStep===1&&!inspection)return;if(wizardStep===2&&!lastPrepared)return;if(wizardStep===3&&!outputReady)return}
+ wizardStep=n;updateWizard();
+}
+function showTab(tab){
+ if(!['editor','verify','guide','about'].includes(tab))return;
+ appTab=tab;
+ document.querySelectorAll('.view').forEach(section=>section.classList.toggle('hidden',section.id!=='view-'+tab));
+ document.querySelectorAll('.navbtn').forEach(btn=>btn.setAttribute('aria-selected',String(btn.dataset.tab===tab)));
+}
+function compareOriginalToCustom(source,custom){
+ const a=parseFirmware(source.buffer.slice(source.byteOffset,source.byteOffset+source.byteLength));
+ const b=parseFirmware(custom.buffer.slice(custom.byteOffset,custom.byteOffset+custom.byteLength));
+ if(source.length!==custom.length||a.version!==b.version||a.entries.length!==b.entries.length||a.logo.offset!==b.logo.offset||a.verify.offset!==b.verify.offset)throw Error(t('verifyLayoutError'));
+ for(let i=0;i<a.entries.length;i++){
+  const x=a.entries[i],y=b.entries[i];
+  if(x.hdr!==y.hdr||x.name!==y.name||x.maintype!==y.maintype||x.subtype!==y.subtype||x.offset!==y.offset||x.stored!==y.stored||(i!==a.logo.index&&x.length!==y.length))throw Error(t('verifyLayoutError'));
+ }
+ const oldImage=source.subarray(a.logo.offset,a.logo.offset+a.logo.length);
+ const newImage=custom.subarray(b.logo.offset,b.logo.offset+b.logo.length);
+ if(!sameJpegProfile(jpegProfile(oldImage),jpegProfile(newImage)))throw Error(t('verifyLogoError'));
+ const areas=[[a.logo.offset,a.logo.offset+a.logo.stored],[a.logo.hdr+0x12c,a.logo.hdr+0x130],[a.verify.offset,a.verify.offset+4]];
+ let diffs=0;
+ for(let i=0;i<source.length;i++)if(source[i]!==custom[i]){
+  diffs++;
+  if(!areas.some(([start,end])=>i>=start&&i<end))throw Error(t('verifyExtraError',i.toLocaleString(locale())));
+ }
+ if(diffs===0)throw Error(t('verifySame'));
+ if(a.sums.length!==b.sums.length)throw Error(t('verifyChecksError'));
+ return {changed:diffs,checks:b.sums.length,source:a,custom:b};
+}
+async function verifyExternal(){
+ if(verifyBusy)return;
+ const original=el('verifyOriginal').files[0],custom=el('verifyCustom').files[0];
+ if(!original||!custom){el('verifyStatus').textContent=t('verifyNoSource');return}
+ verifyBusy=true;verifyReportText='';el('verifyExport').disabled=true;
+ el('verifyAction').disabled=true;el('verifyStatus').className='';el('verifyStatus').textContent=t('verifyWait');
+ try{
+  if(original.size>536870912||custom.size>536870912)throw Error(t('errFileMax'));
+  await waitPaint();
+  const [sourceBuffer,customBuffer]=await Promise.all([original.arrayBuffer(),custom.arrayBuffer()]);
+  const a=new Uint8Array(sourceBuffer),b=new Uint8Array(customBuffer);
+  const result=compareOriginalToCustom(a,b);
+  // Decode both logos in the browser as an additional check beyond IMAGEWTY sums/markers.
+  for(const item of [{bytes:a,logo:result.source.logo},{bytes:b,logo:result.custom.logo}]){
+   const payload=new Blob([item.bytes.subarray(item.logo.offset,item.logo.offset+item.logo.length)],{type:'image/jpeg'});
+   let bitmap;
+   try{bitmap=await loadBitmap(payload);const profile=jpegProfile(item.bytes.subarray(item.logo.offset,item.logo.offset+item.logo.length));if(bitmap.width!==profile.width||bitmap.height!==profile.height)throw Error('dimension mismatch')}
+   catch(_){throw Error(t('verifyLogoError'))}
+   finally{if(bitmap)bitmap.close()}
+  }
+  const [shaA,shaB]=await Promise.all([hashSHA(a),hashSHA(b)]);
+  verifyReportText=[t('verifyTitle'),'',t('reportOriginal')+': '+original.name,t('reportOutput')+': '+custom.name,'IMAGEWTY: '+hex(result.source.version),t('reportEntries')+': '+result.source.entries.length,t('verifyDiff')+': '+result.changed,t('verifyChecksum')+': '+result.checks,t('reportAllowedOnly')+': 0',t('verifySourceHash')+': '+shaA,t('verifyCustomHash')+': '+shaB,'',t('reportNotCertified')].join('\r\n');
+  verifyDisplayState={ok:true,checks:result.checks,changed:result.changed,shaA,shaB};
+  el('verifyStatus').className='good';el('verifyStatus').textContent=t('verifyPass',result.checks,result.changed.toLocaleString(locale()))+'\n'+t('verifySourceHash')+': '+shaA+'\n'+t('verifyCustomHash')+': '+shaB;
+  el('verifyExport').disabled=false;
+ }catch(error){verifyDisplayState={ok:false,reason:error.message};el('verifyStatus').className='error';el('verifyStatus').textContent=t('verifyFail',error.message)}
+ finally{verifyBusy=false;el('verifyAction').disabled=false}
+}
+
+// Visual compositor; deliberately separate from IMAGEWTY parse / patch / verification code.
+const composition={fit:'contain',scale:100,anchor:'center',x:0,y:0,bgMode:'solid',bgColor:'#000000',gradientA:'#04122F',gradientB:'#0768C9',gradientDirection:'horizontal',backgroundFit:'cover'};
+let sourceBitmap=null,backgroundBitmap=null,backgroundFile=null,previewMode=false,previewToken=0,compositionRevision=0;
+function defaultComposition(){return composition.fit==='contain'&&composition.scale===100&&composition.anchor==='center'&&composition.x===0&&composition.y===0&&composition.bgMode==='solid'&&composition.bgColor.toUpperCase()==='#000000';}
+function alignmentPoint(anchor,w,h){const vertical=anchor.startsWith('top')?0:anchor.startsWith('bottom')?1:0.5;const horizontal=anchor.endsWith('left')||anchor==='left'?0:anchor.endsWith('right')||anchor==='right'?1:0.5;return {horizontal,vertical};}
+function placementRect(srcW,srcH,dstW,dstH,fit,scale,anchor,dx,dy){
+ let newW,newH;
+ if(fit==='stretch'){newW=dstW*scale;newH=dstH*scale}
+ else{const s=fit==='cover'?Math.max(dstW/srcW,dstH/srcH):fit==='original'?1:Math.min(dstW/srcW,dstH/srcH);newW=srcW*s*scale;newH=srcH*s*scale;}
+ const a=alignmentPoint(anchor,dstW,dstH);
+ return {x:(dstW-newW)*a.horizontal+dx,y:(dstH-newH)*a.vertical+dy,w:newW,h:newH};
+}
+function drawComposition(ctx,foreground,background,w,h,checker=false){
+ ctx.save();ctx.clearRect(0,0,w,h);
+ if(composition.bgMode==='image'&&background){
+  ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+  const r=placementRect(background.width,background.height,w,h,composition.backgroundFit,1,'center',0,0);
+  ctx.drawImage(background,r.x,r.y,r.w,r.h);
+ }else if(composition.bgMode==='gradient'){
+  const g=composition.gradientDirection==='vertical'?ctx.createLinearGradient(0,0,0,h):composition.gradientDirection==='diagonal'?ctx.createLinearGradient(0,0,w,h):ctx.createLinearGradient(0,0,w,0);
+  g.addColorStop(0,composition.gradientA);g.addColorStop(1,composition.gradientB);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ }else{ctx.fillStyle=composition.bgMode==='image'?'#000000':composition.bgColor;ctx.fillRect(0,0,w,h)}
+ if(checker){
+  const s=Math.max(12,Math.round(w/40));ctx.save();ctx.globalAlpha=0.28;
+  for(let y=0;y<h;y+=s)for(let x=0;x<w;x+=s){ctx.fillStyle=((x/s+y/s)&1)?'#fff':'#222';ctx.fillRect(x,y,s,s)}ctx.restore();
+ }
+ if(foreground){const r=placementRect(foreground.width,foreground.height,w,h,composition.fit,composition.scale/100,composition.anchor,composition.x,composition.y);ctx.drawImage(foreground,r.x,r.y,r.w,r.h)}
+ ctx.restore();
+}
+function applySourcePreview(){const c=el('liveCanvas');const w=inspection?.width||1280,h=inspection?.height||720;c.width=w;c.height=h;const ctx=c.getContext('2d',{alpha:false});if(!ctx)return;drawComposition(ctx,sourceBitmap,backgroundBitmap,w,h,el('showTransparency').checked);el('canvasDimensions').textContent=w+' × '+h+' · '+(w/h).toFixed(2)+':1';el('compositionState').textContent=sourceBitmap?t('compositionDimensions',w,h,composition.scale,el('fitMode').selectedOptions[0]?.textContent||''):t('compositionPending')}
+function markCompositionChanged(){compositionRevision++;lastPrepared=null;previewVisible=false;reportText='';outputReady=false;el('comparebox').classList.add('hidden');applySourcePreview();updateButtons();if(sourceBitmap&&inspection)setStatus(t('compositionNeedsPreflight'))}
+function toggleBackgroundSections(){for(const mode of ['solid','gradient','image'])el('bg'+mode[0].toUpperCase()+mode.slice(1)+'Panel').classList.toggle('hidden',composition.bgMode!==mode);document.querySelectorAll('input[name=bgMode]').forEach(r=>r.checked=r.value===composition.bgMode);document.querySelectorAll('#bgSwatches button').forEach(b=>b.classList.toggle('active',composition.bgMode==='solid'&&b.dataset.color.toUpperCase()===composition.bgColor.toUpperCase()));updateQuickPreviews()}
+function setBackgroundMode(mode){composition.bgMode=mode;toggleBackgroundSections();markCompositionChanged()}
+function setBackgroundColor(color){if(!/^#[\da-fA-F]{6}$/.test(color))return false;composition.bgColor=color.toUpperCase();el('bgColor').value=color;el('bgColorHex').value=color.toUpperCase();composition.bgMode='solid';toggleBackgroundSections();markCompositionChanged();return true}
+function updateQuickPreviews(){}
+function wireComposer(){
+ el('fitMode').addEventListener('change',e=>{composition.fit=e.target.value;markCompositionChanged()});
+ el('scaleRange').addEventListener('input',e=>{composition.scale=Number(e.target.value);el('scaleValue').textContent=composition.scale+'%';markCompositionChanged()});
+ el('anchorGrid').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{composition.anchor=b.dataset.anchor;el('anchorGrid').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));markCompositionChanged()}));
+ for(const id of ['offsetX','offsetY'])el(id).addEventListener('input',e=>{let n=Number(e.target.value);if(!Number.isFinite(n))n=0;composition[id==='offsetX'?'x':'y']=Math.max(-4096,Math.min(4096,Math.round(n)));markCompositionChanged()});
+ el('resetPlacement').addEventListener('click',()=>{composition.fit='contain';composition.scale=100;composition.anchor='center';composition.x=0;composition.y=0;el('fitMode').value='contain';el('scaleRange').value='100';el('scaleValue').textContent='100%';el('offsetX').value='0';el('offsetY').value='0';el('anchorGrid').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.anchor==='center'));markCompositionChanged()});
+ el('centerPlacement').addEventListener('click',()=>{composition.anchor='center';composition.x=0;composition.y=0;el('offsetX').value='0';el('offsetY').value='0';el('anchorGrid').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.anchor==='center'));markCompositionChanged()});
+ document.querySelectorAll('input[name=bgMode]').forEach(b=>b.addEventListener('change',e=>setBackgroundMode(e.target.value)));
+ el('bgColor').addEventListener('input',e=>setBackgroundColor(e.target.value));
+ el('bgColorHex').addEventListener('change',e=>{if(!setBackgroundColor(e.target.value))e.target.value=composition.bgColor});
+ document.querySelectorAll('#bgSwatches button').forEach(b=>b.addEventListener('click',()=>setBackgroundColor(b.dataset.color)));
+ for(const id of ['gradientA','gradientB','gradientDirection','backgroundFit'])el(id).addEventListener('input',e=>{composition[id]=e.target.value;markCompositionChanged()});
+ el('showTransparency').addEventListener('change',applySourcePreview);
+ el('backgroundFile').addEventListener('change',async e=>{
+  const file=e.target.files[0];const token=++previewToken;
+  if(backgroundBitmap){backgroundBitmap.close();backgroundBitmap=null;}backgroundFile=null;
+  if(file){try{if(file.size>25*1048576)throw Error(t('backgroundFileTooLarge'));const bitmap=await loadBitmap(file);if(bitmap.width*bitmap.height>32_000_000){bitmap.close();throw Error(t('imageTooLargeForBrowser'))}if(token!==previewToken){bitmap.close();return}backgroundBitmap=bitmap;backgroundFile=file;el('backgroundFileName').textContent=file.name}catch(err){el('backgroundFileName').textContent=err.message;setStatus(err.message,'error')}}else el('backgroundFileName').textContent='';
+  markCompositionChanged();
+ });
+ el('clearBackgroundFile').addEventListener('click',()=>{previewToken++;if(backgroundBitmap)backgroundBitmap.close();backgroundBitmap=null;backgroundFile=null;el('backgroundFile').value='';el('backgroundFileName').textContent='';markCompositionChanged()});
+ toggleBackgroundSections();applySourcePreview();
+}
+
+
+/* v1.0.0 - language- and theme-aware UI messages; no firmware engine changes */
+Object.assign(I18N.en,{themeLight:'Light mode',themeDark:'Dark mode',themeLightAria:'Switch to light mode',themeDarkAria:'Switch to dark mode',navGuide:'Next steps',gotoGuide:'Next steps',guideHeading:'Next steps — before using your firmware',guideIntro:'Carabc Logo Editor generates and verifies a customized file. It does not install firmware or connect to your device.',guideBoundary:'Flashing is performed using separate third-party tools and device-specific instructions. No installer, USB driver or flashing procedure is provided here.',guideReq:'After generating your .img',guideReq1:'Keep the original, unmodified firmware in a separate safe location. Never overwrite it.',guideReq2:'Open Verify Firmware and compare the original and customized files. Save the validation report.',guideReq3:'Confirm the exact hardware and firmware revision. Structural validation does not guarantee compatibility or successful boot.',guideReq4:'If you decide to install, follow instructions supplied specifically for your device by the manufacturer or seller, including the appropriate external tool.',guideCaution:'Firmware installation may fail or render a device unusable. Recovery cannot be guaranteed. If you do not have a device-specific procedure and a usable original firmware, do not proceed.',step4Desc:'Your file has been generated and statically validated. You may verify it, save the report or start a new editing session.'});
+Object.assign(I18N.es,{themeLight:'Modo claro',themeDark:'Modo oscuro',themeLightAria:'Cambiar a modo claro',themeDarkAria:'Cambiar a modo oscuro',navGuide:'Siguientes pasos',gotoGuide:'Siguientes pasos',guideHeading:'Siguientes pasos — antes de usar el firmware',guideIntro:'Carabc Logo Editor genera y verifica un archivo personalizado. No instala firmware ni se conecta a tu dispositivo.',guideBoundary:'La instalación se realiza con herramientas externas y procedimientos específicos del dispositivo. Aquí no se proporcionan programas, controladores ni pasos para flashear.',guideReq:'Después de generar el .img',guideReq1:'Conserva el firmware original sin modificaciones en un lugar seguro. No lo sobrescribas.',guideReq2:'Abre Verify Firmware, compara el archivo original con el personalizado y guarda el reporte de validación.',guideReq3:'Confirma el modelo exacto y la revisión de hardware y firmware. La validación estructural no garantiza compatibilidad ni arranque.',guideReq4:'Si decides instalarlo, utiliza las instrucciones proporcionadas específicamente para tu equipo por el fabricante o vendedor, incluida la herramienta externa correspondiente.',guideCaution:'La instalación puede fallar o dejar el equipo inutilizable. No se garantiza la recuperación. Si no cuentas con un procedimiento específico y el firmware original adecuado, no continúes.',step4Desc:'El archivo se generó y verificó estáticamente. Puedes comprobarlo, guardar el reporte o comenzar una nueva sesión.'});
+Object.assign(I18N['zh-CN'],{themeLight:'浅色模式',themeDark:'深色模式',themeLightAria:'切换到浅色模式',themeDarkAria:'切换到深色模式',navGuide:'后续步骤',gotoGuide:'后续步骤',guideHeading:'后续步骤——使用固件之前',guideIntro:'Carabc Logo Editor 仅生成和检查自定义文件，不负责安装固件或连接设备。',guideBoundary:'刷写固件需要外部工具和针对具体设备的操作说明。本软件不提供刷机程序、USB 驱动或刷写步骤。',guideReq:'生成 .img 文件之后',guideReq1:'在安全位置单独保存未经修改的原厂固件，切勿覆盖原文件。',guideReq2:'打开 Verify Firmware，比较原厂固件与自定义文件，并保存验证报告。',guideReq3:'核实设备型号、硬件版本和固件版本。结构校验通过不保证兼容或能够成功启动。',guideReq4:'如决定刷写，请按照制造商或销售商为该具体设备提供的说明，使用相应的外部工具。',guideCaution:'固件刷写可能失败，甚至导致设备无法使用。不能保证恢复成功。如果没有设备专用的刷写流程和适用的原厂固件，请勿继续。',step4Desc:'文件已生成并完成静态验证。您可以校验文件、保存报告或开始新任务。'});
+
+let lang='en',fwFile=null,fwArray=null,inspection=null,logoFile=null,reportText='',oldObjectURL=null,newObjectURL=null,processedObjectURL=null,lastPrepared=null,lastState=null,lastStateParts=null,customName=false,busy=false;
+function t(key,...args){const template=I18N[lang][key]??I18N.es[key]??key;return template.replace(/\{(\d+)\}/g,(_,i)=>String(args[Number(i)]??''));}
+const hex=n=>'0x'+n.toString(16).toUpperCase();
+const locale=()=>lang==='zh-CN'?'zh-CN':lang==='en'?'en-US':'es-MX';
+const shortSize=n=>`${n.toLocaleString(locale())} bytes`;
+const ascii=(bytes,start,len)=>{let s='';for(let i=start;i<start+len&&i<bytes.length;i++){if(bytes[i]===0)break;s+=String.fromCharCode(bytes[i]);}return s};
+const baseType=s=>s.replace(/0+$/,'');
+function setStatus(message,type=''){lastState={message,type};lastStateParts=null;el('status').textContent=message;el('status').className=type;}
+function setStatusParts(parts,type=''){setStatus(parts.map(p=>t(p[0],...(p.slice(1)))).filter(Boolean).join('\n'),type);lastStateParts={parts,type};}
+function describePrepared(p){return p.adjusted?t('jpegConverted',Math.round(p.qualityNumber*100),shortSize(p.bytes.length)):t('jpegUntouched')}
+function updateButtons(){el('generate').disabled=busy||!(inspection&&logoFile);el('extract').disabled=!inspection||busy;el('preflight').disabled=busy||!(inspection&&logoFile);updateWizard()}
+function refreshText(){
+ document.documentElement.lang=lang;
+ updateThemeButton();
+ document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+ el('fname').textContent=fwFile?t('firmwareSelected',fwFile.name,(fwFile.size/1048576).toFixed(1)):t('noFirmware');
+ el('verifyOriginalName').textContent=el('verifyOriginal').files[0]?.name||t('verifyMissingOriginal');
+ el('verifyCustomName').textContent=el('verifyCustom').files[0]?.name||t('verifyMissingCustom');
+ if(verifyDisplayState?.ok)el('verifyStatus').textContent=t('verifyPass',verifyDisplayState.checks,verifyDisplayState.changed.toLocaleString(locale()))+'\n'+t('verifySourceHash')+': '+verifyDisplayState.shaA+'\n'+t('verifyCustomHash')+': '+verifyDisplayState.shaB;
+ else if(verifyDisplayState)el('verifyStatus').textContent=t('verifyFail',verifyDisplayState.reason);
+ else if(!verifyBusy)el('verifyStatus').textContent=t('verifyInitial');
+ el('lname').textContent=logoFile?`${logoFile.name} (${shortSize(logoFile.size)})`:t('noImage');
+ if(inspection)showFirmwareStats();
+ if(previewVisible&&lastPrepared&&inspection&&logoFile)showProcessedPreview(lastPrepared);
+ updateCompatibility();updateWizard();applySourcePreview();
+ if(lastStateParts){const {parts,type}=lastStateParts;setStatusParts(parts,type)}
+ else if(!lastState||(!fwFile&&!logoFile)){setStatusParts([['initial']]);}
+}
+let theme='dark';
+function updateThemeButton(){
+ const next=theme==='dark'?'Light':'Dark';
+ el('themeGlyph').textContent=theme==='dark'?'☀':'☾';
+ el('themeText').textContent=t('theme'+next);
+ el('themeToggle').setAttribute('aria-label',t('theme'+next+'Aria'));
+ el('themeToggle').setAttribute('title',t('theme'+next+'Aria'));
+ el('themeToggle').setAttribute('aria-pressed',String(theme==='light'));
+}
+function setTheme(next){
+ if(next!=='dark'&&next!=='light')return;
+ theme=next;document.documentElement.dataset.theme=next;
+ updateThemeButton();
+ try{localStorage.setItem('carabc_v3_theme',next)}catch(_){}
+}
+function setLanguage(newLang){if(!I18N[newLang])return;lang=newLang;el('langSelect').value=lang;refreshText();try{localStorage.setItem('carabc_v3_lang',lang);}catch(_){}}
+function basename(s){return s.replace(/\.img$/i,'').replace(/[^a-zA-Z0-9._-]/g,'_')}
+function defaultOutputName(file){return basename(file)+'_CUSTOM_LOGO.img'}
+function validateOutputName(raw){
+ let name=raw.trim(); if(!name)throw Error(t('fileMissing'));
+ if(/[<>:"/\\|?*\x00-\x1f]/.test(name))throw Error(t('fileInvalid'));
+ if(/[. ]$/.test(name))throw Error(t('fileTrailing'));
+ if(!/\.img$/i.test(name))name+='.img';
+ const base=name.replace(/\.img$/i,'');
+ if(/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(base))throw Error(t('fileReserved'));
+ if(name.length>150)throw Error(t('fileLong'));
+ return name;
+}
+function newURL(blob,isOld){if(isOld){if(oldObjectURL)URL.revokeObjectURL(oldObjectURL);oldObjectURL=URL.createObjectURL(blob);el('oldpreview').src=oldObjectURL;}else{if(newObjectURL)URL.revokeObjectURL(newObjectURL);newObjectURL=URL.createObjectURL(blob);el('newpreview').src=newObjectURL;}}
+function showFirmwareStats(){const f=inspection;el('stats').replaceChildren();for(const v of [t('firmwareSummary',hex(f.version)),t('components',f.entries.length),t('logoDimensions',f.width,f.height),t('available',shortSize(f.logo.stored)),t('checksPassed',f.sums.length)]){const span=document.createElement('span');span.className='stat';span.textContent=v;el('stats').appendChild(span);}el('firmwaredetail').textContent=t('firmwareDetail',f.logo.offset.toLocaleString(locale()),shortSize(f.logo.length),shortSize(f.logo.stored-f.logo.length),f.delta);el('summary').style.display='block'}
+function showProcessedPreview(prepared){previewVisible=true;if(processedObjectURL)URL.revokeObjectURL(processedObjectURL);processedObjectURL=URL.createObjectURL(new Blob([prepared.bytes],{type:'image/jpeg'}));el('compareProcessed').src=processedObjectURL;el('compareOriginal').src=el('newpreview').src;el('comparestats').replaceChildren();for(const v of [t('origBytes')+': '+shortSize(logoFile.size),t('convertedBytes')+': '+shortSize(prepared.bytes.length),t('capacity')+': '+shortSize(inspection.logo.stored),t('resolution')+': '+inspection.width+' × '+inspection.height,t('processLabel')+': '+describePrepared(prepared)]){let e=document.createElement('span');e.className='mini';e.textContent=v;el('comparestats').appendChild(e)}el('comparehint').textContent=prepared.adjusted?t('qualityWarn'):t('qualityGood');el('comparebox').classList.remove('hidden')}
+function parseFirmware(buffer){
+  const bytes=new Uint8Array(buffer),dv=new DataView(buffer);
+  if(bytes.length<0x400||ascii(bytes,0,8)!=='IMAGEWTY')throw Error(t('errNotImageWTY'));
+  const ver=U32(dv,8); if(![0x300,0x403].includes(ver))throw Error(t('errUnsupported',hex(ver)));
+  if(U32(dv,0x0c)!==0x60)throw Error(t('errHeader'));
+  const stride=U32(dv,0x38),count=U32(dv,0x3c);
+  if(stride!==1024||count<1||count>300)throw Error(t('errTable'));
+  const tableEnd=0x400+count*stride;
+  if(tableEnd>bytes.length)throw Error(t('errIncompleteTable'));
+  const entries=[];
+  for(let i=0;i<count;i++){
+    const p=0x400+i*stride;
+    if(U32(dv,p+4)!==1024)throw Error(t('errEntryLength',i));
+    const e={index:i,hdr:p,maintype:ascii(bytes,p+8,8),subtype:ascii(bytes,p+0x10,16),name:ascii(bytes,p+0x24,256),stored:U32(dv,p+0x124),length:U32(dv,p+0x12C),offset:U32(dv,p+0x134)};
+    e.base=baseType(e.subtype);
+    if(!e.stored||e.length>e.stored||e.offset<tableEnd||e.offset+e.stored>bytes.length||e.offset%512!==0)throw Error(t('errEntryBounds',i));
+    entries.push(e);
+  }
+  let sorted=[...entries].sort((a,b)=>a.offset-b.offset);
+  for(let i=1;i<sorted.length;i++)if(sorted[i-1].offset+sorted[i-1].stored>sorted[i].offset)throw Error(t('errOverlap'));
+  const logos=entries.filter(e=>e.base==='BOOTLOGO_FEX');
+  if(logos.length!==1)throw Error(t('errLogosCount',logos.length));
+  const old=logos[0],verify=entries[old.index+1];
+  if(!verify||verify.base!=='VBOOTLOGO_FEX'||verify.length!==4)throw Error(t('errNoVerifier'));
+  if(old.length<32||bytes[old.offset]!==0xFF||bytes[old.offset+1]!==0xD8||bytes[old.offset+old.length-2]!==0xFF||bytes[old.offset+old.length-1]!==0xD9)throw Error(t('errOriginalJPEG'));
+  // Garantiza que el espacio reservado no guarda información oculta.
+  for(let i=old.offset+old.length;i<old.offset+old.stored;i++)if(bytes[i]!==0)throw Error(t('errPadding'));
+  const sums=[];
+  for(let i=1;i<entries.length;i++){
+    const v=entries[i],p=entries[i-1];
+    if(v.base.startsWith('V')&&v.length===4&&v.base.slice(1)===p.base){
+      let calc=sumWords(bytes,p.offset,p.length),stored=U32(dv,v.offset);
+      sums.push({name:p.name,expected:stored,calculated:calc,ok:calc===stored});
+    }
+  }
+  if(sums.length<1||!sums.some(s=>s.name===old.name))throw Error(t('errNoChecksum'));
+  if(sums.some(s=>!s.ok))throw Error(t('errChecksum',sums.filter(s=>!s.ok).map(s=>s.name).join(', ')));
+  const declared=U32(dv,0x18),delta=declared-buffer.byteLength;
+  if(Math.abs(delta)>4096)throw Error(t('errSizeDelta',delta));
+  return {entries,logo:old,verify,sums,bytes,declared,delta,version:ver};
+}
+function sumWords(bytes,offset,length){
+  const dv=new DataView(bytes.buffer,bytes.byteOffset+offset,length);
+  let sum=0,i=0;
+  for(;i+4<=length;i+=4)sum=(sum+dv.getUint32(i,true))>>>0;
+  if(i<length){let tail=0;for(let s=0;i<length;i++,s+=8)tail|=dv.getUint8(i)<<s;sum=(sum+tail)>>>0;}
+  return sum;
+}
+// Evita copiar directamente JPEG progresivos o CMYK que el bootloader puede no leer.
+function isBaselineRGBJPEG(bytes){
+  if(bytes.length<20||bytes[0]!==255||bytes[1]!==216||bytes[bytes.length-2]!==255||bytes[bytes.length-1]!==217)return false;
+  let i=2,baseline=false;
+  while(i+3<bytes.length){
+    if(bytes[i++]!==255)return false;
+    while(bytes[i]===255)i++;
+    const marker=bytes[i++];
+    if(marker===218)break; // SOS: la zona siguiente está comprimida.
+    if(marker===1||(marker>=208&&marker<=215))continue;
+    if(i+2>bytes.length)return false;
+    const seglen=bytes[i]*256+bytes[i+1];
+    if(seglen<2||i+seglen>bytes.length)return false;
+    if(marker>=192&&marker<=207&&![196,200,204].includes(marker)){
+      if(marker!==192||seglen<8||bytes[i+7]!==3)return false;
+      baseline=true;
+    }
+    i+=seglen;
+  }
+  return baseline;
+}
+
+function loadBitmap(blob){return createImageBitmap(blob)}
+function waitPaint(){return new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)))}
+async function makeJPEG(file,inspection){
+  const target=inspection.logo.stored;
+  const bitmap=await loadBitmap(file);
+  const w=inspection.width,h=inspection.height;
+  try{
+    if(defaultComposition()&&file.type==='image/jpeg'&&bitmap.width===w&&bitmap.height===h&&file.size<=target){
+      const bytes=new Uint8Array(await file.arrayBuffer());
+      if(isBaselineRGBJPEG(bytes)&&sameJpegProfile(jpegProfile(bytes),inspection.jpegProfile)){
+        return {bytes,quality:t('jpegUntouched'),qualityNumber:null,adjusted:false,lowQuality:false};
+      }
+    }
+    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+    const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw Error(t('errCanvas'));
+    if(composition.bgMode==='image'&&!backgroundBitmap)throw Error(t('bgMissing'));
+    drawComposition(ctx,bitmap,backgroundBitmap,w,h);
+    // Prueba calidades decrecientes sin cambiar dimensiones, hasta que el JPEG quepa.
+    const qualities=[0.97,0.94,0.91,0.88,0.85,0.82,0.78,0.74,0.70,0.66,0.62,0.58,0.54,0.50,0.46,0.42,0.38,0.34,0.30,0.26,0.22];
+    for(const quality of qualities){
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+      if(!blob)throw Error(t('errConvert'));
+      if(blob.size<=target){
+        const bytes=new Uint8Array(await blob.arrayBuffer());
+        if(!isBaselineRGBJPEG(bytes))throw Error(t('errConvertedJPEG'));
+        if(!sameJpegProfile(jpegProfile(bytes),inspection.jpegProfile))throw Error(t('errJpegUnsupported'));
+        return {bytes,quality:t('jpegConverted',Math.round(quality*100),shortSize(bytes.length)),qualityNumber:quality,adjusted:true,lowQuality:quality<=0.58};
+      }
+    }
+    throw Error(t('errImageTooLarge',shortSize(target)));
+  }finally{bitmap.close()}
+}
+function patch(original,part,verification,imageBytes){
+  if(imageBytes.length>part.stored)throw Error(t('errTooLarge'));
+  const out=new Uint8Array(original.length);out.set(original);
+  out.fill(0,part.offset,part.offset+part.stored);
+  out.set(imageBytes,part.offset);
+  const dv=new DataView(out.buffer);
+  dv.setUint32(part.hdr+0x12C,imageBytes.length,true);
+  dv.setUint32(verification.offset,sumWords(imageBytes,0,imageBytes.length),true);
+  return out;
+}
+
+function verifyPatch(original,modified,f){
+  if(original.length!==modified.length)throw Error(t('errFirmwareLength'));
+  const p=f.logo,v=f.verify;
+  let changed=0;
+  for(let i=0;i<original.length;i++){
+    if(original[i]===modified[i])continue;
+    changed++;
+    if(!((i>=p.offset&&i<p.offset+p.stored)||(i>=p.hdr+0x12C&&i<p.hdr+0x130)||(i>=v.offset&&i<v.offset+4)))throw Error(t('errUnintendedChange',i));
+  }
+  const ff=parseFirmware(modified.buffer);
+  if(ff.entries.length!==f.entries.length||ff.logo.offset!==f.logo.offset||ff.verify.offset!==f.verify.offset)throw Error(t('errOffsets'));
+  for(let i=0;i<f.entries.length;i++){
+    const a=f.entries[i],b=ff.entries[i];
+    if(a.index!==b.index||a.name!==b.name||a.stored!==b.stored||a.offset!==b.offset||(a.index!==p.index&&a.length!==b.length))throw Error(t('errEntryChange'));
+  }
+  return {changed,checks:ff.sums.length,logoLength:ff.logo.length};
+}
+
+async function inspect(){
+ compositionRevision++;previewVisible=false;fwFile=el('firmware').files[0]||null;fwArray=null;inspection=null;reportText='';lastPrepared=null;outputReady=false;fwHash='';el('hardwareAck').checked=false;el('riskAck').checked=false;el('comparebox').classList.add('hidden');el('summary').style.display='none';el('oldpreview').removeAttribute('src');
+ if(!customName||!el('outputName').value.trim())el('outputName').value=fwFile?defaultOutputName(fwFile.name):'';
+ if(!fwFile){setStatusParts([['initial']]);refreshText();updateButtons();return}
+ try{
+  setStatusParts([['readFirmware']]);await waitPaint();
+  if(fwFile.size>536870912)throw Error(t('errFileMax'));
+  let arr=await fwFile.arrayBuffer();let f=parseFirmware(arr);
+  const origJPEG=f.bytes.slice(f.logo.offset,f.logo.offset+f.logo.length);f.jpegProfile=jpegProfile(origJPEG);if(!f.jpegProfile)throw Error(t('errJpegOriginal'));
+  fwHash=await hashSHA(new Uint8Array(arr));
+  const image=new Blob([f.bytes.slice(f.logo.offset,f.logo.offset+f.logo.length)],{type:'image/jpeg'});
+  const bmp=await loadBitmap(image);f.width=bmp.width;f.height=bmp.height;bmp.close();
+  if(f.width<128||f.height<128||f.width>4096||f.height>4096)throw Error(t('errImage'));
+  fwArray=arr;inspection=f;newURL(image,true);showFirmwareStats();applySourcePreview();
+  setStatusParts([['fwOk',hex(f.version),f.sums.length],...(f.logo.stored<50000?[['fwSmall']]:[]),['chooseNext']],'good');
+ }catch(err){inspection=null;fwArray=null;setStatus(t('errFirmwarePrefix',err.message),'error')}
+ refreshText();updateButtons();
+}
+async function chooseLogo(){
+ compositionRevision++;previewVisible=false;logoFile=el('logo').files[0]||null;reportText='';lastPrepared=null;outputReady=false;el('comparebox').classList.add('hidden');if(sourceBitmap){sourceBitmap.close();sourceBitmap=null;}
+ if(logoFile){
+  try{let bitmap=await loadBitmap(logoFile);if(bitmap.width*bitmap.height>32_000_000){bitmap.close();throw Error(t('imageTooLargeForBrowser'))}sourceBitmap=bitmap;newURL(logoFile,false)}
+  catch(err){logoFile=null;el('newpreview').removeAttribute('src');setStatus(t('errImage'),'error')}
+ }else{el('newpreview').removeAttribute('src')}
+ refreshText();applySourcePreview();updateButtons();
+}
+async function preflight(){
+ if(!(inspection&&logoFile))return;
+ busy=true;updateButtons();
+ try{setStatusParts([['previewProgress']]);await waitPaint();const rev=compositionRevision;const prepared=await makeJPEG(logoFile,inspection);if(rev!==compositionRevision)throw Error(t('compositionNeedsPreflight'));lastPrepared=prepared;showProcessedPreview(prepared);updateWizard();setStatusParts([['previewOk',describePrepared(prepared)],...(prepared.lowQuality?[['previewCompressed']]:[])],'good')}
+ catch(err){lastPrepared=null;previewVisible=false;el('comparebox').classList.add('hidden');setStatus(t('previewFailed',err.message),'error')}
+ finally{busy=false;updateButtons()}
+}
+function showNameFallback(){
+ const dlg=el('saveDialog');
+ el('saveDialogName').value=el('outputName').value;
+ el('saveDialogError').textContent='';
+ dlg.showModal();
+ el('saveDialogName').focus();
+ el('saveDialogName').select();
+}
+function openSaveDialog(){
+ if(!(fwArray&&inspection&&logoFile&&lastPrepared&&el('hardwareAck').checked&&el('riskAck').checked)||busy)return;
+ if(typeof window.showSaveFilePicker==='function'){generate(false)}
+ else showNameFallback();
+}
+function confirmSaveDialog(){
+ let name;
+ try{name=validateOutputName(el('saveDialogName').value)}
+ catch(err){el('saveDialogError').textContent=err.message;el('saveDialogName').focus();return}
+ el('outputName').value=name;
+ customName=true;
+ el('saveDialog').close();
+ generate(true);
+}
+function download(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+async function hashSHA(bytes){if(typeof crypto==='undefined'||!crypto.subtle)return 'not supported in this browser';const h=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));return [...h].map(v=>v.toString(16).padStart(2,'0')).join('')}
+async function generate(skipPicker=false){
+ if(!(fwArray&&inspection&&logoFile&&lastPrepared&&el('hardwareAck').checked&&el('riskAck').checked)||busy)return;
+ let name;try{name=validateOutputName(el('outputName').value)}catch(err){setStatus(err.message,'error');el('outputName').focus();return}
+ // Must request a native save dialog directly from the user gesture, before costly async processing.
+ let saveHandle=null;
+ if(!skipPicker&&typeof window.showSaveFilePicker==='function'){
+  try{
+   saveHandle=await window.showSaveFilePicker({suggestedName:name,types:[{description:'Allwinner firmware image',accept:{'application/octet-stream':['.img']}}],excludeAcceptAllOption:true});
+   if(saveHandle.name){name=validateOutputName(saveHandle.name);el('outputName').value=name;customName=true;}
+  }catch(err){if(err.name==='AbortError'){setStatusParts([['cancelSave']]);return}if(!['SecurityError','NotAllowedError','TypeError'].includes(err.name)){setStatus(t('saveFail',err.message),'error');return}showNameFallback();return}
+ }
+ busy=true;reportText='';updateButtons();
+ try{
+  setStatusParts([['genProgress']]);await waitPaint();
+  const replacement=lastPrepared; if(!replacement)throw Error(t('compositionNeedsPreflight'));
+  if(replacement.lowQuality&&!confirm(t('confirmLowQuality',describePrepared(replacement))))return;
+  if(!sameJpegProfile(jpegProfile(replacement.bytes),inspection.jpegProfile))throw Error(t('errJpegUnsupported'));
+  const source=new Uint8Array(fwArray);
+  const modified=patch(source,inspection.logo,inspection.verify,replacement.bytes);
+  setStatusParts([['verifyProgress']]);await waitPaint();
+  const results=verifyPatch(source,modified,inspection);
+  compareOriginalToCustom(source,modified);
+  const shaBefore=await hashSHA(source),shaAfter=await hashSHA(modified);
+  const report=[t('reportHeader'),'',''+t('reportOriginal')+': '+fwFile.name,t('reportOutput')+': '+name,t('reportFormat')+': IMAGEWTY '+hex(inspection.version),t('reportEntries')+': '+inspection.entries.length,t('reportLength')+': '+shortSize(source.length),t('reportOriginalLogo')+': '+shortSize(inspection.logo.length),t('reportNewLogo')+': '+shortSize(replacement.bytes.length),t('reportCapacity')+': '+shortSize(inspection.logo.stored),t('reportTreatment')+': '+describePrepared(replacement),t('reportChanges')+': '+results.changed,t('reportChecks')+': '+results.checks+' / '+results.checks,t('reportAllowedOnly')+': 0',t('reportSHAOld')+': '+shaBefore,t('reportSHANew')+': '+shaAfter,'',t('reportNotCertified')].join('\r\n');
+  const outBlob=new Blob([modified],{type:'application/octet-stream'});
+  if(saveHandle){const writable=await saveHandle.createWritable();try{await writable.write(outBlob);await writable.close()}catch(err){try{await writable.abort()}catch(_){}throw err}}
+  else download(outBlob,name);
+  reportText=report;outputReady=true;goStep(4);
+  const pieces=[['generatingDone',hex(inspection.version),results.checks,results.changed.toLocaleString(locale()),describePrepared(replacement)],...(replacement.lowQuality?[['lowWarn']]:[]),saveHandle?['savedAs',name]:['downloadStarted',name],...(!saveHandle?[['noLocationPicker']]:[]),['reportNotCertified']];
+  setStatusParts(pieces,'good');
+ }catch(err){reportText='';setStatus(t('genFailed',err.message),'error')}
+ finally{busy=false;updateButtons()}
+}
+function extract(){if(!inspection)return;const b=inspection.bytes.slice(inspection.logo.offset,inspection.logo.offset+inspection.logo.length);download(new Blob([b],{type:'image/jpeg'}),basename(fwFile.name)+'_BOOTLOGO.jpg')}
+function exportReport(){if(reportText)download(new Blob(['\ufeff'+reportText],{type:'text/plain;charset=utf-8'}),'carabc_verification_report.txt')}
+el('firmware').addEventListener('change',inspect);
+el('logo').addEventListener('change',chooseLogo);
+el('preflight').addEventListener('click',preflight);
+el('generate').addEventListener('click',openSaveDialog);
+el('closePreview').addEventListener('click',()=>{previewVisible=false;el('comparebox').classList.add('hidden')});
+el('startOver').addEventListener('click',()=>window.location.reload());
+el('saveDialogConfirm').addEventListener('click',confirmSaveDialog);
+el('saveDialogCancel').addEventListener('click',()=>el('saveDialog').close());
+el('saveDialogName').addEventListener('input',()=>el('saveDialogError').textContent='');
+el('saveDialogName').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();confirmSaveDialog()}});
+el('extract').addEventListener('click',extract);
+el('langSelect').addEventListener('change',event=>{setLanguage(event.target.value)});
+el('themeToggle').addEventListener('click',()=>setTheme(theme==='dark'?'light':'dark'));
+
+el('stepBack').addEventListener('click',()=>goStep(wizardStep-1));
+el('stepForward').addEventListener('click',()=>goStep(wizardStep+1));
+document.querySelectorAll('.navbtn').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
+el('gotoVerify').addEventListener('click',()=>showTab('verify'));
+el('gotoGuide').addEventListener('click',()=>showTab('guide'));
+el('report2').addEventListener('click',exportReport);
+for(const id of ['hardwareAck','riskAck'])el(id).addEventListener('change',updateWizard);
+for(const id of ['verifyOriginal','verifyCustom'])el(id).addEventListener('change',()=>{
+ const element=el(id);el(id+'Name').textContent=element.files[0]?.name||t(id==='verifyOriginal'?'verifyMissingOriginal':'verifyMissingCustom');
+ verifyReportText='';verifyDisplayState=null;el('verifyExport').disabled=true;el('verifyStatus').className='';el('verifyStatus').textContent=t('verifyInitial');
+});
+el('verifyAction').addEventListener('click',verifyExternal);
+el('verifyExport').addEventListener('click',()=>{if(verifyReportText)download(new Blob(['\ufeff'+verifyReportText],{type:'text/plain;charset=utf-8'}),'carabc_comparison_report.txt')});
+
+try{const stored=localStorage.getItem('carabc_v3_lang');if(I18N[stored])lang=stored}catch(_){}
+try{const savedTheme=localStorage.getItem('carabc_v3_theme');if(['dark','light'].includes(savedTheme))theme=savedTheme}catch(_){}
+document.documentElement.dataset.theme=theme;
+el('langSelect').value=lang;refreshText();
+wireComposer();
+window.CarabcTest={openSaveDialog,confirmSaveDialog,parseFirmware,patch,verifyPatch,compareOriginalToCustom,jpegProfile,sameJpegProfile,makeJPEG,isBaselineRGBJPEG,validateOutputName,translations:I18N,setLanguage,setTheme,showTab,goStep,composition,drawComposition,placementRect,setBackgroundColor,setBackgroundMode,markCompositionChanged};
+
+</script>
+</body>
+</html>
